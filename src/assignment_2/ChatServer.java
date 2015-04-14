@@ -1,5 +1,8 @@
 package assignment_2;
 
+import assignment_2.interfaces.*;
+import static assignment_2.helperClasses.Constants.*;
+
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
@@ -8,17 +11,25 @@ import java.util.*;
 import static java.lang.System.out;
 
 /**
+ * Server implementation
  * Created by martin on 14/04/2015.
  */
 class ChatServer extends UnicastRemoteObject implements Server {
 
     private final List<Client> clients;
 
-    ChatServer() throws RemoteException, AlreadyBoundException {
+    ChatServer() throws RemoteException{
         clients = new ArrayList<>();
-        Registry registry = LocateRegistry.createRegistry(Constants.PORT);
-        registry.bind(Constants.RMI_ID, this);
-        System.out.println("chat server is listening");
+        bindRegistry();
+        System.out.format("chat server is listening at %s:%s%n%n", HOST, String.valueOf(PORT));
+    }
+
+    private void bindRegistry() {
+        try {
+            Registry registry = LocateRegistry.createRegistry(PORT);
+            registry.bind(RMI_ID, this);
+        }
+        catch (Exception e) { e.printStackTrace(); }
     }
 
     @Override
@@ -40,7 +51,7 @@ class ChatServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public void send(String message) throws RemoteException {
+    public synchronized void send(String message) throws RemoteException {
         notifyAllClients(message);
     }
 
@@ -50,7 +61,7 @@ class ChatServer extends UnicastRemoteObject implements Server {
                 c.notify(message);
     }
 
-    public static void main(String[] args) throws RemoteException, AlreadyBoundException {
+    public static void main(String[] args) throws RemoteException {
         new ChatServer();
     }
 }
