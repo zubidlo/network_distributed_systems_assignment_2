@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import static java.lang.System.out;
 
 /**
  * Created by martin on 14/04/2015.
@@ -19,23 +20,28 @@ class ServerImplementation extends UnicastRemoteObject implements Server {
 
     @Override
     public synchronized void register(final Client client) throws RemoteException {
-        nofifyAllClients(String.format("%s is connected%n", client.getName()));
+        String msg = String.format("%s is connected%n", client.getName());
+        notifyAllClients(msg);
         clients.add(client);
+        out.print(msg);
+        out.println("Connected clients: " + clients.size());
     }
 
     @Override
     public synchronized void unregister(final Client client) throws RemoteException {
-        client.notify(String.format("Bye bye %s%n", client.getName()));
         clients.remove(client);
-        nofifyAllClients(String.format("%s is disconnected%n", client.getName()));
+        String msg = String.format("%s is disconnected%n", client.getName());
+        notifyAllClients(msg);
+        out.print(msg);
+        out.println("Connected clients: " + clients.size());
     }
 
     @Override
     public void send(final String message) throws RemoteException {
-        nofifyAllClients(message);
+        notifyAllClients(message);
     }
 
-    private void nofifyAllClients(final String message) throws RemoteException{
+    private void notifyAllClients(final String message) throws RemoteException{
         if(clients.size() > 0)
             for(Client c : clients)
                 c.notify(message);
