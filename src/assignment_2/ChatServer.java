@@ -2,7 +2,7 @@ package assignment_2;
 
 import assignment_2.interfaces.*;
 import static assignment_2.helperClasses.Constants.*;
-
+import java.io.Serializable;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
@@ -14,54 +14,53 @@ import static java.lang.System.out;
  * Server implementation
  * Created by martin on 14/04/2015.
  */
-class ChatServer extends UnicastRemoteObject implements Server {
+class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     private final List<Client> clients;
 
-    ChatServer() throws RemoteException{
+    ChatServer() throws RemoteException, AlreadyBoundException {
         clients = new ArrayList<>();
         bindRegistry();
         System.out.format("chat server is listening at %s:%s%n%n", HOST, String.valueOf(PORT));
     }
 
-    private void bindRegistry() {
-        try {
-            Registry registry = LocateRegistry.createRegistry(PORT);
-            registry.bind(RMI_ID, this);
-        }
-        catch (Exception e) { e.printStackTrace(); }
+    private void bindRegistry() throws RemoteException, AlreadyBoundException {
+
+        Registry registry = LocateRegistry.createRegistry(PORT);
+        registry.bind(RMI_ID, this);
     }
 
     @Override
-    public synchronized void register(Client client) throws RemoteException {
-        String msg = String.format("%s is connected%n", client.getName());
-        notifyAllClients(msg);
+    public synchronized void connect(Client client) throws RemoteException {
         clients.add(client);
-        out.print(msg);
-        out.println("Connected clients: " + clients.size());
+        notifyAllClients(client);
+        out.print(String.format("%s is connected. Connected clients:%d%n", client.getUserName(), clients.size()));
     }
 
     @Override
-    public synchronized void unregister(Client client) throws RemoteException {
+    public synchronized void disconnect(Client client) throws RemoteException {
         clients.remove(client);
-        String msg = String.format("%s is disconnected%n", client.getName());
-        notifyAllClients(msg);
-        out.print(msg);
-        out.println("Connected clients: " + clients.size());
+        notifyAllClients(client);
+        out.print(String.format("%s is disconnected. Connected clients:%d%n", client.getUserName(), clients.size()));
     }
 
     @Override
-    public synchronized void send(String message) throws RemoteException {
-        notifyAllClients(message);
+    public synchronized void send(Client client) throws RemoteException {
+        notifyAllClients(client);
     }
 
-    private void notifyAllClients(final String message) throws RemoteException{
+    @Override
+    public List<Client> getConnectedClients() throws RemoteException {
+        return new ArrayList<Client>(clients);
+    }
+
+    private void notifyAllClients(final Client client) throws RemoteException{
         if(clients.size() > 0)
             for(Client c : clients)
-                c.notify(message);
+                c.notify(client);
     }
 
-    public static void main(String[] args) throws RemoteException {
+    public static void main(String[] args) throws RemoteException, AlreadyBoundException {
         new ChatServer();
     }
 }

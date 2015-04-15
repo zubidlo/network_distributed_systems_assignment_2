@@ -1,15 +1,15 @@
 package assignment_2.interfaces;
 
-import assignment_2.interfaces.Client;
-
 import java.rmi.*;
+import java.util.List;
 
 /**
  * Server interface
  * Created by martin on 14/04/2015.
  */
 public interface Server extends Remote {
-    void register(final Client client) throws RemoteException;
-    void unregister(final Client client) throws RemoteException;
-    void send(final String message) throws RemoteException;
+    void connect(final Client client) throws RemoteException;
+    void disconnect(final Client client) throws RemoteException;
+    void send(final Client client) throws RemoteException;
+    List<Client> getConnectedClients() throws RemoteException;
 }

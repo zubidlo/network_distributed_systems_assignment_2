@@ -5,78 +5,105 @@ import assignment_2.interfaces.*;
 import static assignment_2.helperClasses.Constants.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
+import java.util.List;
 
 /**
  * Client implementation
  * Created by martin on 14/04/2015.
  */
-class ChatClient extends UnicastRemoteObject implements Client {
+class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
-    private final FrameSkeleton frame;
+    private transient final FrameSkeleton frame;
+    private transient Server server;
     private final String username;
-    private Server server;
+    private final Color userColor;
+    private String currentText;
+    private transient int onlineUsersCount;
 
-    ChatClient(final String name) throws RemoteException{
-        frame = new FrameSkeleton("ChatRoom");
+
+    ChatClient(final String name) throws RemoteException, NotBoundException {
         username = name;
-        frame.nameLabel.setText("Welcome " + username);
-        registerRemote();
+        frame = new FrameSkeleton(String.format("Chat[%s]", username));
+        userColor = FrameSkeleton.randColor();
+        lookUpRemote();
+        onlineUsersCount = 0;
         addListeners();
+        currentText = "...connected...";
+        server.connect(this);
     }
 
-    private void registerRemote() {
-        try {
-            Registry registry = LocateRegistry.getRegistry(HOST, PORT);
-            server = (Server) registry.lookup(RMI_ID);
-            server.register(this);
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-
-    private void unregisterAndExit() {
-        try {
-            server.unregister(this);
-        } catch (RemoteException e1) { e1.printStackTrace(); }
-        System.exit(0);
-    }
-
-    private void sendMessage(String message) {
-        try {
-            String msg = String.format("[%s]> %s%n", getName(), message);
-            server.send(msg);
-            frame.messageField.setText("");
-        } catch (RemoteException e) { e.printStackTrace(); }
+    private void lookUpRemote() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry(HOST, PORT);
+        server = (Server) registry.lookup(RMI_ID);
     }
 
     private void addListeners() {
         frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) { unregisterAndExit(); }
+            public void windowClosing(WindowEvent e) {
+                disconnectAndExit();
+            }
         });
         frame.messageField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER)
-                    sendMessage(frame.messageField.getText());
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) sendText();
             }
         });
-        frame.sendButton.addActionListener(e -> sendMessage(frame.messageField.getText()));
-        frame.disconnectButton.addActionListener(e -> unregisterAndExit());
+    }
+
+    private void disconnectAndExit() {
+        try {
+            currentText = "...disconnected...";
+            server.disconnect(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } finally {
+            System.exit(0);
+        }
+    }
+
+    private void sendText() {
+        try {
+            currentText = frame.messageField.getText();
+            server.send(ChatClient.this);
+            frame.messageField.setText("");
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     @Override
-    public synchronized void notify(String message) throws RemoteException {
-        frame.chatTextArea.append(message);
-        frame.chatTextArea.revalidate();
+    public void notify(Client client) throws RemoteException {
+        List<Client> clients = server.getConnectedClients();
+        if(clients.size() != onlineUsersCount) {
+            frame.refillUsersOnlinePane(clients);
+            onlineUsersCount = clients.size();
+        }
+        frame.addToChatPane(client.getColor(), client.getUserName(), client.getText());
     }
 
     @Override
-    public synchronized String getName() throws RemoteException {
-        return username;
+    public String getUserName() throws RemoteException {
+        return new String(username);
     }
 
-    public static void main(String[] args) throws RemoteException{
+    @Override
+    public Color getColor() throws RemoteException {
+        return new Color(userColor.getRed(), userColor.getGreen(), userColor.getBlue());
+    }
+
+    @Override
+    public String getText() throws RemoteException {
+        return new String(currentText);
+    }
+
+    public static void main(String[] args) throws RemoteException, NotBoundException {
         String name = "anonymous";
         String result = JOptionPane.showInputDialog(null, "enter your name");
         if(!result.equals("")) name = result;

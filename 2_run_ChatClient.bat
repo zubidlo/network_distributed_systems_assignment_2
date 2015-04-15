@@ -1,4 +1,4 @@
 cls
-SET CLASSES="./bin;"
+SET CLASSES="./src;"
 java -cp %CLASSES% assignment_2.ChatClient
 pause
