@@ -1,5 +1,6 @@
 package assignment_2.interfaces;
 
+import javax.swing.*;
 import java.awt.*;
 import java.rmi.*;
 
@@ -12,4 +13,5 @@ public interface Client extends Remote {
     String getUserName() throws RemoteException;
     Color getColor() throws RemoteException;
     String getText() throws RemoteException;
+    Icon getIcon() throws RemoteException;
 }

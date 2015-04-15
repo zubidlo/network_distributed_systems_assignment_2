@@ -21,16 +21,18 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private transient final FrameSkeleton frame;
     private transient Server server;
+    private transient int onlineUsersCount;
     private final String username;
     private final Color userColor;
+    private final Icon icon;
     private String currentText;
-    private transient int onlineUsersCount;
 
 
-    ChatClient(final String name) throws RemoteException, NotBoundException {
+    private ChatClient(final String name, final Icon i) throws RemoteException, NotBoundException {
         username = name;
         frame = new FrameSkeleton(String.format("Chat[%s]", username));
         userColor = FrameSkeleton.randColor();
+        icon = i;
         lookUpRemote();
         onlineUsersCount = 0;
         addListeners();
@@ -85,28 +87,50 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
             frame.refillUsersOnlinePane(clients);
             onlineUsersCount = clients.size();
         }
-        frame.addToChatPane(client.getColor(), client.getUserName(), client.getText());
+        frame.addToChatPane(client.getColor(), client.getUserName(), client.getText(),client.getIcon());
     }
 
     @Override
     public String getUserName() throws RemoteException {
-        return new String(username);
+        return username;
     }
 
     @Override
     public Color getColor() throws RemoteException {
-        return new Color(userColor.getRed(), userColor.getGreen(), userColor.getBlue());
+        return userColor;
     }
 
     @Override
     public String getText() throws RemoteException {
-        return new String(currentText);
+        return currentText;
+    }
+
+    @Override
+    public Icon getIcon() throws RemoteException {
+        return icon;
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
         String name = "anonymous";
-        String result = JOptionPane.showInputDialog(null, "enter your name");
+        String result = JOptionPane.showInputDialog(
+                null,
+                "enter your nickname",
+                "Nickname",
+                JOptionPane.QUESTION_MESSAGE);
+
         if(!result.equals("")) name = result;
-        new ChatClient(name);
+
+
+        Icon initialIcon = ICONS.get(0);
+        Icon[] icons = ICONS.toArray(new Icon[0]);
+        Icon chosenIcon = (Icon) JOptionPane.showInputDialog(null,
+                "select your avatar",
+                "Avatar",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                icons,
+                initialIcon);
+
+        new ChatClient(name, chosenIcon);
     }
 }

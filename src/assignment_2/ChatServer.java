@@ -18,7 +18,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     private final List<Client> clients;
 
-    ChatServer() throws RemoteException, AlreadyBoundException {
+    private ChatServer() throws RemoteException, AlreadyBoundException {
         clients = new ArrayList<>();
         bindRegistry();
         System.out.format("chat server is listening at %s:%s%n%n", HOST, String.valueOf(PORT));
@@ -51,7 +51,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     @Override
     public List<Client> getConnectedClients() throws RemoteException {
-        return new ArrayList<Client>(clients);
+        return new ArrayList<>(clients);
     }
 
     private void notifyAllClients(final Client client) throws RemoteException{
