@@ -1,6 +1,7 @@
 package assignment_2.helperClasses;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,5 +33,10 @@ public class Constants {
         if(imgURL != null) return new ImageIcon(imgURL);
         else System.out.println("Couldn't find file: " + "assignment_2/icons/" + filename);
         return null;
+    }
+
+    public static void printInstalledFonts() {
+        Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
+                .forEach(System.out::println);
     }
 }

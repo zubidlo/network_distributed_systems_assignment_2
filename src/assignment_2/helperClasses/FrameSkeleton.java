@@ -3,14 +3,12 @@ package assignment_2.helperClasses;
 import assignment_2.interfaces.Client;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+import javax.swing.border.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-
 import static javax.swing.UIManager.*;
 
 /**
@@ -20,7 +18,6 @@ import static javax.swing.UIManager.*;
 public class FrameSkeleton extends JFrame {
 
     public final JTextField messageField;
-    private final StyleContext styleContext;
     private final StyledDocument chatRoomDocument, usersOnlineDocument;
     private final JTextPane chatPane, usersOnlinePane;
     private final Style userNameStyle, textStyle;
@@ -30,7 +27,7 @@ public class FrameSkeleton extends JFrame {
     public FrameSkeleton(String title) {
         super(title);
         messageField = new JTextField();
-        styleContext = new StyleContext();
+        StyleContext styleContext = new StyleContext();
         chatRoomDocument = new DefaultStyledDocument(styleContext);
         usersOnlineDocument = new DefaultStyledDocument(styleContext);
         userNameStyle = styleContext.addStyle("Username", null);
@@ -41,19 +38,21 @@ public class FrameSkeleton extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(themesMenu());
         buildContentPane();
+        getContentPane().setBackground(new Color(235, 235, 235));
         setJMenuBar(menuBar);
         setTheme("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setSize(600, 400);
         setResizable(false);
         setVisible(true);
+        messageField.requestFocus();
     }
 
     private void setStyles() {
         userNameStyle.addAttribute(StyleConstants.FontSize, 12);
-        userNameStyle.addAttribute(StyleConstants.FontFamily, "verdana");
+        userNameStyle.addAttribute(StyleConstants.FontFamily, "Arial");
         userNameStyle.addAttribute(StyleConstants.Bold, true);
+        userNameStyle.addAttribute(StyleConstants.Italic, true);
 
         textStyle.addAttribute(StyleConstants.FontSize, 14);
         textStyle.addAttribute(StyleConstants.FontFamily, "consolas");
@@ -88,6 +87,16 @@ public class FrameSkeleton extends JFrame {
         JLabel newMessageLabel = new JLabel("New Message");
         newMessageLabel.setBounds(2, 326, 100, 15);
         getContentPane().add(newMessageLabel);
+
+        Font font = new Font("Century", Font.PLAIN, 14);
+        Color color = new Color(25, 71, 25);
+
+        for(Component c :getContentPane().getComponents()) {
+            if(c instanceof JLabel) {
+                c.setFont(font);
+                c.setForeground(color);
+            }
+        }
     }
 
     private void setAndPlaceTextPanes() {
@@ -105,15 +114,16 @@ public class FrameSkeleton extends JFrame {
         JScrollPane usersOnlineScrollPane = new JScrollPane(usersOnlinePane,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        usersOnlineScrollPane.setBounds(437, 18, 156, 300);
+        usersOnlineScrollPane.setBounds(437, 18, 156, 328);
         usersOnlineScrollPane.setBorder(BORDER);
         getContentPane().add(usersOnlineScrollPane);
     }
 
     private void setAndPlaceMessageField() {
-        messageField.setBounds(85, 320, 508, 26);
+        messageField.setBounds(92, 320, 325, 26);
         messageField.setBorder(BORDER);
         messageField.setFont(new Font("consolas", Font.PLAIN, 14));
+        messageField.setDocument(new JTextFieldLimiter(36));
         getContentPane().add(messageField);
     }
 
@@ -153,7 +163,7 @@ public class FrameSkeleton extends JFrame {
         userNameStyle.addAttribute(StyleConstants.Foreground, userColor);
         try {
             chatRoomDocument.insertString(0, String.format("%s%n", text), textStyle);
-            chatRoomDocument.insertString(0, String.format("[%s]:", username), userNameStyle);
+            chatRoomDocument.insertString(0, String.format("[%s]:  ", username), userNameStyle);
             chatPane.insertIcon(icon);
         } catch (BadLocationException e) {
             e.printStackTrace();
@@ -177,12 +187,13 @@ public class FrameSkeleton extends JFrame {
         return new Color(rand(), rand(), rand());
     }
 
-    public static int rand() {
+    private static int rand() {
         int color = (int) Math.round(256 * Math.random());
         return color > 230 ? 230 : color;
     }
 
     public static void main(String[] args) {
         new FrameSkeleton("frame skeleton");
+        Constants.printInstalledFonts();
     }
 }

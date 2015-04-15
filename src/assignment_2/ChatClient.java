@@ -36,7 +36,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         lookUpRemote();
         onlineUsersCount = 0;
         addListeners();
-        currentText = "...connected...";
+        currentText = " ...connected...";
         server.connect(this);
     }
 
@@ -60,13 +60,12 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private void disconnectAndExit() {
         try {
-            currentText = "...disconnected...";
+            currentText = " ...disconnected...";
             server.disconnect(this);
         } catch (RemoteException e) {
             e.printStackTrace();
-        } finally {
-            System.exit(0);
         }
+        System.exit(0);
     }
 
     private void sendText() {
@@ -115,17 +114,17 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         String result = JOptionPane.showInputDialog(
                 null,
                 "enter your nickname",
-                "Nickname",
-                JOptionPane.QUESTION_MESSAGE);
+                name);
 
         if(!result.equals("")) name = result;
 
 
         Icon initialIcon = ICONS.get(0);
         Icon[] icons = ICONS.toArray(new Icon[0]);
-        Icon chosenIcon = (Icon) JOptionPane.showInputDialog(null,
+        Icon chosenIcon = (Icon) JOptionPane.showInputDialog(
+                null,
                 "select your avatar",
-                "Avatar",
+                null,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 icons,
