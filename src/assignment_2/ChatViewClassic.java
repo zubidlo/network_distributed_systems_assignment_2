@@ -42,7 +42,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
         buildContentPane();
         getContentPane().setBackground(new Color(235, 235, 235));
         setJMenuBar(menuBar);
-        setTheme("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        setTheme("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(600, 400);
         setResizable(false);
