@@ -93,7 +93,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     @Override
     public void updateConnectedClientList(List<Client> connectedClients) throws RemoteException {
-        chatView.updateOnlineUsers(connectedClients);
+        chatView.updateConnectedUsers(connectedClients);
     }
 
     @Override

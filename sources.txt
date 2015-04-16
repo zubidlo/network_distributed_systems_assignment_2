@@ -1,6 +1,0 @@
-C:\Users\martin\Data\git_repos\network_distributed_systems_assignment_2\src\assignment_2\ChatClient.java
-C:\Users\martin\Data\git_repos\network_distributed_systems_assignment_2\src\assignment_2\ChatServer.java
-C:\Users\martin\Data\git_repos\network_distributed_systems_assignment_2\src\assignment_2\ChatViewClassic.java
-C:\Users\martin\Data\git_repos\network_distributed_systems_assignment_2\src\assignment_2\interfaces\ChatView.java
-C:\Users\martin\Data\git_repos\network_distributed_systems_assignment_2\src\assignment_2\interfaces\Client.java
-C:\Users\martin\Data\git_repos\network_distributed_systems_assignment_2\src\assignment_2\interfaces\Server.java

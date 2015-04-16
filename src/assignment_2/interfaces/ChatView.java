@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface ChatView {
     void postMessage(Icon icon, Color userColor, String username, String text);
-    void updateOnlineUsers(List<Client> onlineClients);
+    void updateConnectedUsers(List<Client> onlineClients);
 }

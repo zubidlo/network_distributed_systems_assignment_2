@@ -175,7 +175,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     @Override
-    public void updateOnlineUsers(List<Client> onlineClients) {
+    public void updateConnectedUsers(List<Client> onlineClients) {
         try {
             usersOnlineDocument.remove(0, usersOnlineDocument.getLength());
             for(Client c : onlineClients) {
