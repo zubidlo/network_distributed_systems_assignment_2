@@ -165,10 +165,10 @@ public class ChatViewClassic extends JFrame implements ChatView {
     public void postMessage(Icon icon, Color userColor, String username, String text) {
         userNameStyle.addAttribute(StyleConstants.Foreground, userColor);
         try {
-            chatRoomDocument.insertString(0, String.format("%s%n", text), textStyle);
-            chatRoomDocument.insertString(0, String.format("[%s]:  ", username), userNameStyle);
-            chatPane.setCaretPosition(0);
+            chatPane.setCaretPosition(chatRoomDocument.getLength());
             chatPane.insertIcon(icon);
+            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("[%s]:  ", username), userNameStyle);
+            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("%s%n", text), textStyle);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
