@@ -1,5 +1,7 @@
-package assignment_2.helperClasses;
+package assignment_2;
 
+import assignment_2.helperClasses.Utilities;
+import assignment_2.helperClasses.JTextFieldLimiter;
 import assignment_2.interfaces.Client;
 
 import javax.swing.*;
@@ -188,12 +190,11 @@ public class FrameSkeleton extends JFrame {
     }
 
     private static int rand() {
-        int color = (int) Math.round(256 * Math.random());
-        return color > 230 ? 230 : color;
+        return (int) Math.round(200 * Math.random());
     }
 
     public static void main(String[] args) {
         new FrameSkeleton("frame skeleton");
-        Constants.printInstalledFonts();
+        Utilities.printInstalledFonts();
     }
 }

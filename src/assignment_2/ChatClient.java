@@ -1,8 +1,7 @@
 package assignment_2;
 
-import assignment_2.helperClasses.*;
 import assignment_2.interfaces.*;
-import static assignment_2.helperClasses.Constants.*;
+import static assignment_2.helperClasses.Utilities.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,7 +85,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
             frame.refillUsersOnlinePane(clients);
             onlineUsersCount = clients.size();
         }
-        frame.addToChatPane(client.getColor(), client.getUserName(), client.getText(),client.getIcon());
+        frame.addToChatPane(client.getColor(), client.getUserName(), client.getText(), client.getIcon());
     }
 
     @Override

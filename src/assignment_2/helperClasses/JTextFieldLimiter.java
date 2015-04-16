@@ -6,11 +6,11 @@ import javax.swing.text.*;
  * Document adjustment
  * Created by martin on 15/04/2015.
  */
-class JTextFieldLimiter extends PlainDocument {
+public class JTextFieldLimiter extends PlainDocument {
 
     private final int limit;
 
-    JTextFieldLimiter(final int limit) {
+    public JTextFieldLimiter(final int limit) {
         super();
         this.limit = limit;
     }

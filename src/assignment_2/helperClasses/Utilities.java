@@ -11,7 +11,7 @@ import java.util.List;
  * Constants to set RMI
  * Created by martin on 14/04/2015.
  */
-public class Constants {
+public class Utilities {
     public static final String HOST = "localhost";
     public static final int PORT = 2001;
     public static final String RMI_ID = "chat_server";
@@ -29,7 +29,7 @@ public class Constants {
     }
 
     private static ImageIcon getImage(String filename) {
-        URL imgURL = (Constants.class.getClassLoader().getResource("assignment_2/icons/" + filename));
+        URL imgURL = (Utilities.class.getClassLoader().getResource("assignment_2/icons/" + filename));
         if(imgURL != null) return new ImageIcon(imgURL);
         else System.out.println("Couldn't find file: " + "assignment_2/icons/" + filename);
         return null;
