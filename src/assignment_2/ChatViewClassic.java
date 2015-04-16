@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.IntStream;
+
 import static javax.swing.UIManager.*;
 
 /**
@@ -46,6 +48,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(600, 400);
         setResizable(false);
+        insertLinesToChatPane(19);
         setVisible(true);
         messageField.requestFocus();
     }
@@ -59,6 +62,14 @@ public class ChatViewClassic extends JFrame implements ChatView {
         textStyle.addAttribute(StyleConstants.FontSize, 14);
         textStyle.addAttribute(StyleConstants.FontFamily, "consolas");
         textStyle.addAttribute(StyleConstants.Bold, false);
+    }
+
+    private void insertLinesToChatPane(int i) {
+        IntStream.range(1,i).forEach(j -> {
+            try {
+                chatRoomDocument.insertString(chatRoomDocument.getLength(), "\n", userNameStyle);
+            } catch(BadLocationException e) { e.printStackTrace(); }
+        });
     }
 
     private void setTheme(String theme) {
