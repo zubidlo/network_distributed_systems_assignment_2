@@ -18,8 +18,8 @@ import java.util.List;
  */
 class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
-    private transient final FrameSkeleton frame;
-    private transient Server server;
+    private transient final ChatViewClassic chatView;
+    private transient final Server server;
     private transient int onlineUsersCount;
     private final String username;
     private final Color userColor;
@@ -29,28 +29,28 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private ChatClient(final String name, final Icon i) throws RemoteException, NotBoundException {
         username = name;
-        frame = new FrameSkeleton(String.format("Chat[%s]", username));
-        userColor = FrameSkeleton.randColor();
+        chatView = new ChatViewClassic(String.format("Chat[%s]", username));
+        userColor = ChatViewClassic.randColor();
         icon = i;
-        lookUpRemote();
+        server = lookUpRemote();
         onlineUsersCount = 0;
         addListeners();
         currentText = " ...connected...";
         server.connect(this);
     }
 
-    private void lookUpRemote() throws RemoteException, NotBoundException {
+    private Server lookUpRemote() throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry(HOST, PORT);
-        server = (Server) registry.lookup(RMI_ID);
+        return  (Server) registry.lookup(RMI_ID);
     }
 
     private void addListeners() {
-        frame.addWindowListener(new WindowAdapter() {
+        chatView.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 disconnectAndExit();
             }
         });
-        frame.messageField.addKeyListener(new KeyAdapter() {
+        chatView.messageField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) sendText();
             }
@@ -69,9 +69,9 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private void sendText() {
         try {
-            currentText = frame.messageField.getText();
+            currentText = chatView.messageField.getText();
             server.send(ChatClient.this);
-            frame.messageField.setText("");
+            chatView.messageField.setText("");
         } catch (RemoteException ex) {
             ex.printStackTrace();
             System.exit(-1);
@@ -82,25 +82,25 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     public void notify(Client client) throws RemoteException {
         List<Client> clients = server.getConnectedClients();
         if(clients.size() != onlineUsersCount) {
-            frame.refillUsersOnlinePane(clients);
+            chatView.updateOnlineUsers(clients);
             onlineUsersCount = clients.size();
         }
-        frame.addToChatPane(client.getColor(), client.getUserName(), client.getText(), client.getIcon());
+        chatView.postMessage(client.getIcon(), client.getColor(), client.getUserName(), client.getText());
     }
 
     @Override
     public String getUserName() throws RemoteException {
-        return username;
+        return new String(username);
     }
 
     @Override
     public Color getColor() throws RemoteException {
-        return userColor;
+        return new Color(userColor.getRed(), userColor.getGreen(), userColor.getBlue());
     }
 
     @Override
     public String getText() throws RemoteException {
-        return currentText;
+        return new String(currentText);
     }
 
     @Override

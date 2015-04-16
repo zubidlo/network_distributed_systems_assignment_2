@@ -2,6 +2,7 @@ package assignment_2;
 
 import assignment_2.helperClasses.Utilities;
 import assignment_2.helperClasses.JTextFieldLimiter;
+import assignment_2.interfaces.ChatView;
 import assignment_2.interfaces.Client;
 
 import javax.swing.*;
@@ -17,7 +18,7 @@ import static javax.swing.UIManager.*;
  * JFrame skeleton with theme changing menu
  * Created by martin on 28/03/2015.
  */
-public class FrameSkeleton extends JFrame {
+public class ChatViewClassic extends JFrame implements ChatView {
 
     public final JTextField messageField;
     private final StyledDocument chatRoomDocument, usersOnlineDocument;
@@ -26,7 +27,7 @@ public class FrameSkeleton extends JFrame {
     private static final Color BACKGROUND_COLOR = Color.white;
     private static final Border BORDER = new LineBorder(Color.lightGray);
 
-    public FrameSkeleton(String title) {
+    public ChatViewClassic(String title) {
         super(title);
         messageField = new JTextField();
         StyleContext styleContext = new StyleContext();
@@ -64,7 +65,7 @@ public class FrameSkeleton extends JFrame {
     private void setTheme(String theme) {
         try {
             UIManager.setLookAndFeel(theme);
-            SwingUtilities.updateComponentTreeUI(FrameSkeleton.this);
+            SwingUtilities.updateComponentTreeUI(ChatViewClassic.this);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -146,7 +147,7 @@ public class FrameSkeleton extends JFrame {
                 LookAndFeelMenuItem menuItem = ((LookAndFeelMenuItem) event.getSource());
                 String className = menuItem.lookAndFeelInfo.getClassName();
                 UIManager.setLookAndFeel(className);
-                SwingUtilities.updateComponentTreeUI(FrameSkeleton.this);
+                SwingUtilities.updateComponentTreeUI(ChatViewClassic.this);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(-1);
@@ -161,7 +162,8 @@ public class FrameSkeleton extends JFrame {
         return menuLookAndFeel;
     }
 
-    public void addToChatPane(Color userColor, String username, String text, Icon icon) {
+    @Override
+    public void postMessage(Icon icon, Color userColor, String username, String text) {
         userNameStyle.addAttribute(StyleConstants.Foreground, userColor);
         try {
             chatRoomDocument.insertString(0, String.format("%s%n", text), textStyle);
@@ -172,7 +174,8 @@ public class FrameSkeleton extends JFrame {
         }
     }
 
-    public void refillUsersOnlinePane(List<Client> onlineClients) {
+    @Override
+    public void updateOnlineUsers(List<Client> onlineClients) {
         try {
             usersOnlineDocument.remove(0, usersOnlineDocument.getLength());
             for(Client c : onlineClients) {
@@ -194,7 +197,7 @@ public class FrameSkeleton extends JFrame {
     }
 
     public static void main(String[] args) {
-        new FrameSkeleton("frame skeleton");
+        new ChatViewClassic("frame skeleton");
         Utilities.printInstalledFonts();
     }
 }
