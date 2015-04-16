@@ -2,7 +2,7 @@ package assignment_2.interfaces;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.List;
 
 /**
  * chat view interface
@@ -10,5 +10,5 @@ import java.util.*;
  */
 public interface ChatView {
     void postMessage(Icon icon, Color userColor, String username, String text);
-    void updateOnlineUsers(java.util.List<Client> onlineClients);
+    void updateOnlineUsers(List<Client> onlineClients);
 }

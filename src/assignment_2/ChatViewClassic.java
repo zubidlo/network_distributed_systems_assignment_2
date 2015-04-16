@@ -1,7 +1,5 @@
 package assignment_2;
 
-import assignment_2.helperClasses.Utilities;
-import assignment_2.helperClasses.JTextFieldLimiter;
 import assignment_2.interfaces.ChatView;
 import assignment_2.interfaces.Client;
 
@@ -21,6 +19,7 @@ import static javax.swing.UIManager.*;
 public class ChatViewClassic extends JFrame implements ChatView {
 
     public final JTextField messageField;
+    private final StyleContext styleContext;
     private final StyledDocument chatRoomDocument, usersOnlineDocument;
     private final JTextPane chatPane, usersOnlinePane;
     private final Style userNameStyle, textStyle;
@@ -30,7 +29,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
     public ChatViewClassic(String title) {
         super(title);
         messageField = new JTextField();
-        StyleContext styleContext = new StyleContext();
+        styleContext = new StyleContext();
         chatRoomDocument = new DefaultStyledDocument(styleContext);
         usersOnlineDocument = new DefaultStyledDocument(styleContext);
         userNameStyle = styleContext.addStyle("Username", null);
@@ -168,6 +167,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
         try {
             chatRoomDocument.insertString(0, String.format("%s%n", text), textStyle);
             chatRoomDocument.insertString(0, String.format("[%s]:  ", username), userNameStyle);
+            chatPane.setCaretPosition(0);
             chatPane.insertIcon(icon);
         } catch (BadLocationException e) {
             e.printStackTrace();
@@ -196,8 +196,34 @@ public class ChatViewClassic extends JFrame implements ChatView {
         return (int) Math.round(200 * Math.random());
     }
 
+    private static void printInstalledFonts() {
+        Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
+                .forEach(System.out::println);
+    }
+
     public static void main(String[] args) {
         new ChatViewClassic("frame skeleton");
-        Utilities.printInstalledFonts();
+        printInstalledFonts();
+    }
+
+    /**
+     * Document adjustment
+     * Created by martin on 15/04/2015.
+     */
+    public class JTextFieldLimiter extends PlainDocument {
+
+        private final int limit;
+
+        public JTextFieldLimiter(final int limit) {
+            super();
+            this.limit = limit;
+        }
+
+        public void insertString( int offset, String str, AttributeSet attr) throws BadLocationException {
+            if (str == null) return;
+            if ((getLength() + str.length()) <= limit) {
+                super.insertString(offset, str, attr);
+            }
+        }
     }
 }

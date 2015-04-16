@@ -1,15 +1,17 @@
 package assignment_2;
 
 import assignment_2.interfaces.*;
-import static assignment_2.helperClasses.Utilities.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.Serializable;
+import java.net.URL;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,28 +22,31 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private transient final ChatViewClassic chatView;
     private transient final Server server;
-    private transient int onlineUsersCount;
     private final String username;
     private final Color userColor;
     private final Icon icon;
-    private String currentText;
+    private volatile String currentText;
 
 
-    private ChatClient(final String name, final Icon i) throws RemoteException, NotBoundException {
+    private ChatClient(
+            final String name,
+            final Icon i,
+            String hostname,
+            int port,
+            String rmi_id) throws RemoteException, NotBoundException {
         username = name;
         chatView = new ChatViewClassic(String.format("Chat[%s]", username));
         userColor = ChatViewClassic.randColor();
         icon = i;
-        server = lookUpRemote();
-        onlineUsersCount = 0;
+        server = lookUpRemote(hostname, port, rmi_id);
         addListeners();
         currentText = " ...connected...";
         server.connect(this);
     }
 
-    private Server lookUpRemote() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(HOST, PORT);
-        return  (Server) registry.lookup(RMI_ID);
+    private Server lookUpRemote(String hostname, int port, String rmi_id) throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry(hostname, port);
+        return  (Server) registry.lookup(rmi_id);
     }
 
     private void addListeners() {
@@ -74,33 +79,36 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
             chatView.messageField.setText("");
         } catch (RemoteException ex) {
             ex.printStackTrace();
-            System.exit(-1);
         }
     }
 
     @Override
-    public void notify(Client client) throws RemoteException {
-        List<Client> clients = server.getConnectedClients();
-        if(clients.size() != onlineUsersCount) {
-            chatView.updateOnlineUsers(clients);
-            onlineUsersCount = clients.size();
-        }
-        chatView.postMessage(client.getIcon(), client.getColor(), client.getUserName(), client.getText());
+    public void postMessage(
+            final Icon icon,
+            final Color userColor,
+            final String username,
+            final String text) throws RemoteException {
+        chatView.postMessage(icon, userColor, username, text);
+    }
+
+    @Override
+    public void updateConnectedClientList(List<Client> connectedClients) throws RemoteException {
+        chatView.updateOnlineUsers(connectedClients);
     }
 
     @Override
     public String getUserName() throws RemoteException {
-        return new String(username);
+        return username;
     }
 
     @Override
     public Color getColor() throws RemoteException {
-        return new Color(userColor.getRed(), userColor.getGreen(), userColor.getBlue());
+        return userColor;
     }
 
     @Override
     public String getText() throws RemoteException {
-        return new String(currentText);
+        return currentText;
     }
 
     @Override
@@ -108,14 +116,34 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         return icon;
     }
 
+    private static final List<Icon> ICONS = new ArrayList<>();
+
+    static {
+        Arrays.asList(
+                "icon1.png",
+                "icon2.png",
+                "icon3.png",
+                "icon4.png",
+                "icon5.png",
+                "icon6.png"
+        ).forEach(f -> ICONS.add(getImage(f)));
+    }
+
+    private static ImageIcon getImage(String filename) {
+        URL imgURL = ChatClient.class.getClassLoader().getResource("assignment_2/icons/" + filename);
+        if(imgURL != null) return new ImageIcon(imgURL);
+        else System.out.println("Couldn't find file: " + "assignment_2/icons/" + filename);
+        return null;
+    }
+
     public static void main(String[] args) throws RemoteException, NotBoundException {
-        String name = "anonymous";
+        String username = "anonymous";
         String result = JOptionPane.showInputDialog(
                 null,
                 "enter your nickname",
-                name);
+                username);
 
-        if(!result.equals("")) name = result;
+        if(!result.equals("")) username = result;
 
 
         Icon initialIcon = ICONS.get(0);
@@ -129,6 +157,10 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
                 icons,
                 initialIcon);
 
-        new ChatClient(name, chosenIcon);
+        String hostname = args[0];
+        int port = Integer.parseInt(args[1]);
+        String rmi_id = args[2];
+
+        new ChatClient(username, chosenIcon, hostname, port, rmi_id);
     }
 }
