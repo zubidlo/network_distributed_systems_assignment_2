@@ -173,13 +173,13 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     @Override
-    public void postMessage(Icon icon, Color userColor, String username, String text) {
-        userNameStyle.addAttribute(StyleConstants.Foreground, userColor);
+    public void postMessage(Line line) {
+        userNameStyle.addAttribute(StyleConstants.Foreground, line.getColor());
         try {
             chatPane.setCaretPosition(chatRoomDocument.getLength());
-            chatPane.insertIcon(icon);
-            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("[%s]:  ", username), userNameStyle);
-            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("%s%n", text), textStyle);
+            chatPane.insertIcon(line.getIcon());
+            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("[%s]>  ", line.getName()), userNameStyle);
+            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("%s%n", line.getText()), textStyle);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }

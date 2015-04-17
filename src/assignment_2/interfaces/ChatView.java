@@ -1,7 +1,7 @@
 package assignment_2.interfaces;
 
-import javax.swing.*;
-import java.awt.*;
+import assignment_2.Line;
+
 import java.util.List;
 
 /**
@@ -9,6 +9,6 @@ import java.util.List;
  * Created by martin on 16/04/2015.
  */
 public interface ChatView {
-    void postMessage(Icon icon, Color userColor, String username, String text);
+    void postMessage(Line line);
     void updateConnectedUsers(List<Client> onlineClients);
 }

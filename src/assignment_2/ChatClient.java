@@ -27,7 +27,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     private final Icon icon;
     private volatile String currentText;
 
-
     private ChatClient(
             final String name,
             final Icon i,
@@ -75,7 +74,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     private void sendText() {
         try {
             currentText = chatView.messageField.getText();
-            server.send(ChatClient.this);
+            server.send(new Line(icon, userColor, username, currentText));
             chatView.messageField.setText("");
         } catch (RemoteException ex) {
             ex.printStackTrace();
@@ -83,12 +82,8 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     }
 
     @Override
-    public void postMessage(
-            final Icon icon,
-            final Color userColor,
-            final String username,
-            final String text) throws RemoteException {
-        chatView.postMessage(icon, userColor, username, text);
+    public void postMessage(Line line) throws RemoteException {
+        chatView.postMessage(line);
     }
 
     @Override
@@ -116,26 +111,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         return icon;
     }
 
-    private static final List<Icon> ICONS = new ArrayList<>();
-
-    static {
-        Arrays.asList(
-                "icon1.png",
-                "icon2.png",
-                "icon3.png",
-                "icon4.png",
-                "icon5.png",
-                "icon6.png"
-        ).forEach(f -> ICONS.add(getImage(f)));
-    }
-
-    private static ImageIcon getImage(String filename) {
-        URL imgURL = ChatClient.class.getClassLoader().getResource("assignment_2/icons/" + filename);
-        if(imgURL != null) return new ImageIcon(imgURL);
-        else System.out.println("Couldn't find file: " + "assignment_2/icons/" + filename);
-        return null;
-    }
-
     public static void main(String[] args) throws RemoteException, NotBoundException {
         String username = "anonymous";
         String result = JOptionPane.showInputDialog(
@@ -146,8 +121,8 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         if(!result.equals("")) username = result;
 
 
-        Icon initialIcon = ICONS.get(0);
-        Icon[] icons = ICONS.toArray(new Icon[0]);
+        Icon initialIcon = Icons.get(0);
+        Icon[] icons = Icons.getAll().toArray(new Icon[0]);
         Icon chosenIcon = (Icon) JOptionPane.showInputDialog(
                 null,
                 "select your avatar",
