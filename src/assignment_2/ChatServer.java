@@ -41,7 +41,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
         for(Line line : lastTwentyLines)
             c.postMessage(line);
         c.postMessage(new Line(Icons.getByFilename("server.png"), Color.black, "SERVER", "Welcome to our chat room!"));
-        out.print(String.format("%s is connected. Connected connectedClients:%d%n", c.getUserName(), connectedClients.size()));
+        out.print(String.format("%s is connected. Connected users:%d%n", c.getUserName(), connectedClients.size()));
     }
 
     @Override

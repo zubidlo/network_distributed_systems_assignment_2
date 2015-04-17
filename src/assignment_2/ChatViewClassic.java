@@ -21,7 +21,6 @@ import static javax.swing.UIManager.*;
 public class ChatViewClassic extends JFrame implements ChatView {
 
     public final JTextField messageField;
-    private final StyleContext styleContext;
     private final StyledDocument chatRoomDocument, usersOnlineDocument;
     private final JTextPane chatPane, usersOnlinePane;
     private final Style userNameStyle, textStyle;
@@ -31,7 +30,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
     public ChatViewClassic(String title) {
         super(title);
         messageField = new JTextField();
-        styleContext = new StyleContext();
+        StyleContext styleContext = new StyleContext();
         chatRoomDocument = new DefaultStyledDocument(styleContext);
         usersOnlineDocument = new DefaultStyledDocument(styleContext);
         userNameStyle = styleContext.addStyle("Username", null);

@@ -6,14 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.Serializable;
-import java.net.URL;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Client implementation
@@ -121,11 +117,10 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
         if(!result.equals("")) username = result;
 
-
-        Icon initialIcon = Icons.get(0);
         Icon[] icons = Icons.getAll().stream()
                 .filter(i -> !((ImageIcon) i).getDescription().equals("server.png"))
                 .toArray(size -> new Icon[size]);
+
         Icon chosenIcon = (Icon) JOptionPane.showInputDialog(
                 null,
                 "select your avatar",
@@ -133,7 +128,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 icons,
-                initialIcon);
+                Icons.get(0));
 
         String hostname = args[0];
         int port = Integer.parseInt(args[1]);
