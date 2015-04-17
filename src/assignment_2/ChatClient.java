@@ -13,6 +13,7 @@ import java.rmi.server.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Client implementation
@@ -122,7 +123,9 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
 
         Icon initialIcon = Icons.get(0);
-        Icon[] icons = Icons.getAll().toArray(new Icon[0]);
+        Icon[] icons = Icons.getAll().stream()
+                .filter(i -> !((ImageIcon) i).getDescription().equals("server.png"))
+                .toArray(size -> new Icon[size]);
         Icon chosenIcon = (Icon) JOptionPane.showInputDialog(
                 null,
                 "select your avatar",

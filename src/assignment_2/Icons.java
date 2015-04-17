@@ -1,13 +1,15 @@
 package assignment_2;
 
 import javax.swing.*;
-import java.net.URL;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * icon constants
+ * automatically creates list of icons from .png files in icons/ dir
+ * images should be of 24x24 pixels size for visual consistency
  * Created by martin on 17/04/2015.
  */
 class Icons {
@@ -15,26 +17,24 @@ class Icons {
     private static final List<Icon> icons = new ArrayList<>();
 
     static {
-        Arrays.asList(
-                "nurse.png",
-                "youngGuy.png",
-                "guyWithHat.png",
-                "boldGuy.png",
-                "ninja.png",
-                "oldGuy.png",
-                "server.png"
-        ).forEach(f -> icons.add(getImage(f)));
+        File folder = new File(Icons.class.getClassLoader().getResource("assignment_2/icons/").getPath());
+        List<File> files = Arrays.asList(folder.listFiles())
+                .stream()
+                .filter(File::isFile)
+                .collect(Collectors.toList());
+
+        files.stream()
+                .filter(f -> f.getName().endsWith(".png"))
+                .forEachOrdered(f -> icons.add(getImage(f.getPath())));
     }
 
-    private static ImageIcon getImage(String filename) {
-        URL imgURL = Icons.class.getClassLoader().getResource("assignment_2/icons/" + filename);
-        if(imgURL != null) {
-            ImageIcon icon =  new ImageIcon(imgURL);
-            icon.setDescription(filename);
+    private static ImageIcon getImage(String path) {
+        ImageIcon icon =  new ImageIcon(path);
+        if(icon != null) {
+            icon.setDescription(path.substring(path.lastIndexOf(File.separator) + 1, path.length()));
             return icon;
         }
-        else System.out.println("Couldn't find file: " + "assignment_2/icons/" + filename);
-        return null;
+        else throw new RuntimeException("Couldn't find file: " + path);
     }
 
     static List<Icon> getAll() {

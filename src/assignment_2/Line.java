@@ -10,10 +10,10 @@ import java.io.Serializable;
  */
 public class Line implements Serializable{
 
-    final Icon icon;
-    final Color color;
-    final String name;
-    final String text;
+    private final Icon icon;
+    private final Color color;
+    private final String name;
+    private final String text;
 
     public Line(Icon icon, Color color, String name, String text) {
         this.icon = icon;
