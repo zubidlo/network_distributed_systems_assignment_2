@@ -195,39 +195,6 @@ public class ChatViewClassic extends JFrame implements ChatView {
         }
     }
 
-    public static Color randColor() {
-        return new Color(rand(), rand(), rand());
-    }
-
-    private static int rand() {
-        return (int) Math.round(150 * Math.random() + 50);
-    }
-
-    public static void printInstalledFonts() {
-        Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
-                .forEach(System.out::println);
-    }
-
-    public static void printUIManagerDefaults() {
-        Enumeration keys = UIManager.getDefaults().keys();
-        while (keys.hasMoreElements())  {
-            Object key = keys.nextElement();
-            System.out.format("%s value:%s%n", key, UIManager.get(key));
-        }
-    }
-
-    public static void printInstalledLookAndFeels() {
-        Arrays.stream(UIManager.getInstalledLookAndFeels())
-                .forEach(System.out::println);
-    }
-
-    public static void main(String[] args) {
-        new ChatViewClassic("frame skeleton");
-        //printInstalledFonts();
-        //printUIManagerDefaults();
-        //printInstalledLookAndFeels();
-    }
-
     /**
      * Document adjustment
      * Created by martin on 15/04/2015.

@@ -5,6 +5,7 @@ import assignment_2.interfaces.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import static java.lang.System.out;
+import static assignment_2.HelperClasses.Utils.*;
 
 /**
  * Server implementation
@@ -23,16 +25,16 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     private List<Line> lastTwentyLines;
     private static Icon serverIcon = Icons.createIcon("server.jpg");
 
-    private ChatServer(String hostname, int port, String rmi_id) throws RemoteException, AlreadyBoundException {
+    private ChatServer(String hostname, int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException {
         connectedClients = new ArrayList<>();
         lastTwentyLines = new ArrayList<>(20);
-        bindRegistry(port, rmi_id);
+        bindRegistry(hostname, port, rmi_id);
         log(String.format("Listening at %s:%s%n%n", hostname, String.valueOf(port)));
     }
 
-    private void bindRegistry(int port, String rmi_id) throws RemoteException, AlreadyBoundException {
+    private void bindRegistry(String hostname, int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException {
         Registry registry = LocateRegistry.createRegistry(port);
-        registry.bind(rmi_id, this);
+        Naming.rebind(makeRmiUrlString(hostname, port, rmi_id), this);
     }
 
     private void log(String logMesage) {
@@ -83,7 +85,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
             });
     }
 
-    public static void main(String[] args) throws RemoteException, AlreadyBoundException {
+    public static void main(String[] args) throws RemoteException, AlreadyBoundException, MalformedURLException {
         String hostname = args[0];
         int port = Integer.parseInt(args[1]);
         String rmi_id = args[2];

@@ -6,10 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.rmi.*;
-import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.util.List;
+import static assignment_2.HelperClasses.Utils.*;
 
 /**
  * Client implementation
@@ -29,10 +30,10 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
             final Icon i,
             String hostname,
             int port,
-            String rmi_id) throws RemoteException, NotBoundException {
+            String rmi_id) throws RemoteException, NotBoundException, MalformedURLException {
         username = name;
         chatView = new ChatViewClassic(String.format("Chat[%s]", username));
-        userColor = ChatViewClassic.randColor();
+        userColor = randColor();
         icon = i;
         server = lookUpRemote(hostname, port, rmi_id);
         addListeners();
@@ -40,9 +41,8 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         server.connect(this);
     }
 
-    private Server lookUpRemote(String hostname, int port, String rmi_id) throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(hostname, port);
-        return  (Server) registry.lookup(rmi_id);
+    private Server lookUpRemote(String hostname, int port, String rmi_id) throws RemoteException, NotBoundException, MalformedURLException {
+        return (Server) Naming.lookup(makeRmiUrlString(hostname, port, rmi_id));
     }
 
     private void addListeners() {
@@ -134,7 +134,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     }
 
-    public static void main(String[] args) throws RemoteException, NotBoundException {
+    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
         setUIManagerDefaults();
 
