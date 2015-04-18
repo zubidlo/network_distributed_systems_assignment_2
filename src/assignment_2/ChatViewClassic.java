@@ -96,10 +96,6 @@ public class ChatViewClassic extends JFrame implements ChatView {
         usersOnlineLabel.setBounds(437, 2, 100, 15);
         getContentPane().add(usersOnlineLabel);
 
-        JLabel newMessageLabel = new JLabel("New Message");
-        newMessageLabel.setBounds(2, 326, 100, 15);
-        getContentPane().add(newMessageLabel);
-
         Font font = new Font("Century", Font.PLAIN, 14);
         Color color = new Color(25, 71, 25);
 
@@ -132,10 +128,10 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     private void setAndPlaceMessageField() {
-        messageField.setBounds(92, 320, 498, 26);
+        messageField.setBounds(2, 320, 589, 26);
         messageField.setBorder(BORDER);
         messageField.setFont(new Font("consolas", Font.PLAIN, 14));
-        messageField.setDocument(new JTextFieldLimiter(62));
+        messageField.setDocument(new JTextFieldLimiter(73));
         getContentPane().add(messageField);
     }
 
