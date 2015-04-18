@@ -57,7 +57,7 @@ public class Utils {
         }
     }
 
-    public static String hostname() {
+    public static String ipAddress() {
         String hostname = "localhost";
         try {
             hostname = InetAddress.getLocalHost().getHostAddress();
@@ -68,6 +68,6 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-        out.println(hostname());
+        out.println(ipAddress());
     }
 }

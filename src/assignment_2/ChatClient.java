@@ -39,7 +39,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         icon = i;
         System.out.println("available RMI stubs:");
         printRegistryList(makeRmiUrlString(hostname, port, rmi_id));
-        //Registry registry = LocateRegistry.getRegistry(hostname, port);
         server = (Server) Naming.lookup(makeRmiUrlString(hostname, port, rmi_id));
         addListeners();
         currentText = " ...connected...";
