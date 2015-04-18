@@ -8,6 +8,8 @@ import java.awt.event.*;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.*;
 import java.util.List;
 import static assignment_2.HelperClasses.Utils.*;
@@ -35,16 +37,13 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         chatView = new ChatViewClassic(String.format("Chat[%s]", username));
         userColor = randColor();
         icon = i;
-        System.out.print("available RMI stubs:");
+        System.out.println("available RMI stubs:");
         printRegistryList(makeRmiUrlString(hostname, port, rmi_id));
-        server = lookUpRemote(hostname, port, rmi_id);
+        Registry registry = LocateRegistry.getRegistry(hostname, port);
+        server = (Server) registry.lookup(hostname);
         addListeners();
         currentText = " ...connected...";
         server.connect(this);
-    }
-
-    private Server lookUpRemote(String hostname, int port, String rmi_id) throws RemoteException, NotBoundException, MalformedURLException {
-        return (Server) Naming.lookup(makeRmiUrlString(hostname, port, rmi_id));
     }
 
     private void addListeners() {

@@ -7,7 +7,8 @@ import java.awt.*;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.*;
-import java.rmi.registry.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.*;
 import java.util.*;
 import java.util.List;
@@ -28,13 +29,9 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     private ChatServer(String hostname, int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException {
         connectedClients = new ArrayList<>();
         lastTwentyLines = new ArrayList<>(20);
-        bindRegistry(hostname, port, rmi_id);
-        log(String.format("Listening at %s:%s%n%n", hostname, String.valueOf(port)));
-    }
-
-    private void bindRegistry(String hostname, int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException {
         Registry registry = LocateRegistry.createRegistry(port);
-        Naming.rebind(makeRmiUrlString(hostname, port, rmi_id), this);
+        registry.rebind(hostname, this);
+        log(String.format("Listening at %s:%s%n%n", hostname, String.valueOf(port)));
     }
 
     private void log(String logMesage) {

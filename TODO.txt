@@ -1,2 +1,0 @@
-fix scroll pane word wrap problem
-try to work out security manager
