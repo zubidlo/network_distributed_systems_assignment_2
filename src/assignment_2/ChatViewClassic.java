@@ -126,16 +126,16 @@ public class ChatViewClassic extends JFrame implements ChatView {
         JScrollPane usersOnlineScrollPane = new JScrollPane(usersOnlinePane,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        usersOnlineScrollPane.setBounds(437, 18, 156, 328);
+        usersOnlineScrollPane.setBounds(437, 18, 156, 300);
         usersOnlineScrollPane.setBorder(BORDER);
         getContentPane().add(usersOnlineScrollPane);
     }
 
     private void setAndPlaceMessageField() {
-        messageField.setBounds(92, 320, 325, 26);
+        messageField.setBounds(92, 320, 498, 26);
         messageField.setBorder(BORDER);
         messageField.setFont(new Font("consolas", Font.PLAIN, 14));
-        messageField.setDocument(new JTextFieldLimiter(36));
+        messageField.setDocument(new JTextFieldLimiter(62));
         getContentPane().add(messageField);
     }
 
@@ -179,6 +179,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
             chatPane.insertIcon(line.getIcon());
             chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("[%s]>  ", line.getName()), userNameStyle);
             chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("%s%n", line.getText()), textStyle);
+            chatPane.setCaretPosition(chatRoomDocument.getLength());
         } catch (BadLocationException e) {
             e.printStackTrace();
         }

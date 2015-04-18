@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * automatically creates list of icons from .png files in icons/ dir
@@ -17,24 +16,23 @@ class Icons {
     private static final List<Icon> icons = new ArrayList<>();
 
     static {
-        File folder = new File(Icons.class.getClassLoader().getResource("assignment_2/icons/").getPath());
-        List<File> files = Arrays.asList(folder.listFiles())
+        String iconsDirName = "assignment_2/icons/";
+        File folder = new File(Icons.class.getClassLoader().getResource(iconsDirName).getPath());
+
+        File[] files = Arrays.asList(folder.listFiles())
                 .stream()
                 .filter(File::isFile)
-                .collect(Collectors.toList());
+                .toArray(File[]::new);
 
-        files.stream()
+        Arrays.stream(files)
                 .filter(f -> f.getName().endsWith(".png"))
                 .forEachOrdered(f -> icons.add(getImage(f.getPath())));
     }
 
     private static ImageIcon getImage(String path) {
         ImageIcon icon =  new ImageIcon(path);
-        if(icon != null) {
-            icon.setDescription(path.substring(path.lastIndexOf(File.separator) + 1, path.length()));
-            return icon;
-        }
-        else throw new RuntimeException("Couldn't find file: " + path);
+        icon.setDescription(path.substring(path.lastIndexOf(File.separator) + 1, path.length()));
+        return icon;
     }
 
     static List<Icon> getAll() {
@@ -49,6 +47,7 @@ class Icons {
     static Icon getByFilename(String filename) {
         return icons.stream()
                 .filter( i -> ((ImageIcon) i).getDescription().equals(filename))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("no such icon"));
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("no such icon"));
     }
 }

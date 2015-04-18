@@ -119,7 +119,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
         Icon[] icons = Icons.getAll().stream()
                 .filter(i -> !((ImageIcon) i).getDescription().equals("server.png"))
-                .toArray(size -> new Icon[size]);
+                .toArray(Icon[]::new);
 
         Icon chosenIcon = (Icon) JOptionPane.showInputDialog(
                 null,

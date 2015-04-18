@@ -1,1 +1,2 @@
-fix scroll pane word wrap problem(if fixed redo gui)
+fix scroll pane word wrap problem
+try to work out security manager
