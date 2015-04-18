@@ -32,7 +32,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
         lastTwentyLines = new ArrayList<>(20);
         Registry registry = LocateRegistry.createRegistry(port);
         out.println(registry.toString());
-        System.setProperty("java.rmi.server.ipAddress", ipAddress());
+        System.setProperty("java.rmi.server.hostname", ipAddress());
         Naming.rebind(makeRmiUrlString(ipAddress(), port, rmi_id), this);
         log(String.format("Listening at %s:%s%n%n", ipAddress(), String.valueOf(port)));
     }
