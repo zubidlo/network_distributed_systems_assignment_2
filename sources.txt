@@ -1,0 +1,9 @@
+./src/assignment_2/ChatClient.java
+./src/assignment_2/ChatServer.java
+./src/assignment_2/ChatViewClassic.java
+./src/assignment_2/HelperClasses/Utils.java
+./src/assignment_2/Icons.java
+./src/assignment_2/interfaces/ChatView.java
+./src/assignment_2/interfaces/Client.java
+./src/assignment_2/interfaces/Server.java
+./src/assignment_2/Line.java
