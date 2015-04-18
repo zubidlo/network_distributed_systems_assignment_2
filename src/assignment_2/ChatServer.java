@@ -9,7 +9,6 @@ import java.net.*;
 import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.*;
 import java.util.*;
 import java.util.List;
@@ -23,22 +22,13 @@ import static assignment_2.HelperClasses.Utils.*;
  */
 class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
+    private final static Icon SERVER_ICON = Icons.createIcon("server.jpg");
     private final List<Client> connectedClients;
     private List<Line> lastTwentyLines;
-    private static Icon serverIcon = Icons.createIcon("server.jpg");
 
-    private ChatServer(int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException, java.net.UnknownHostException {
+    private ChatServer() throws RemoteException {
         connectedClients = new ArrayList<>();
         lastTwentyLines = new ArrayList<>(20);
-        Registry registry = LocateRegistry.createRegistry(port);
-        out.println(registry.toString());
-        System.setProperty("java.rmi.server.hostname", ipAddress());
-        Naming.rebind(makeRmiUrlString(ipAddress(), port, rmi_id), this);
-        log(String.format("Listening at %s:%s%n%n", ipAddress(), String.valueOf(port)));
-    }
-
-    private void log(String logMesage) {
-        out.print(logMesage);
     }
 
     @Override
@@ -50,12 +40,12 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
             c.postMessage(line);
 
         c.postMessage(new Line(
-                serverIcon,
+                SERVER_ICON,
                 Color.darkGray,
                 "SERVER",
                 String.format("%s, welcome to our chat room!", c.getUserName())));
 
-        log(String.format("%s is connected. Connected users:%d%n", c.getUserName(), connectedClients.size()));
+        out.format("%s is connected. Connected users:%d%n", c.getUserName(), connectedClients.size());
     }
 
     @Override
@@ -63,7 +53,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
         connectedClients.remove(c);
         updateConnectedClientLists(connectedClients);
         sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), c.getText()));
-        log(String.format("%s is disconnected. Connected connectedClients:%d%n", c.getUserName(), connectedClients.size()));
+        out.format("%s is disconnected. Connected connectedClients:%d%n", c.getUserName(), connectedClients.size());
     }
 
     @Override
@@ -88,6 +78,9 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, MalformedURLException, UnknownHostException {
         int port = Integer.parseInt(args[0]);
         String rmi_id = args[1];
-        new ChatServer(port, rmi_id);
+
+        out.println(LocateRegistry.createRegistry(port).toString());
+        System.setProperty("java.rmi.server.hostname", ipAddress());
+        Naming.rebind(makeRmiUrlString(ipAddress(), port, rmi_id), new ChatServer());
     }
 }

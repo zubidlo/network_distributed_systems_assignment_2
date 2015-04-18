@@ -3,10 +3,8 @@ package assignment_2.HelperClasses;
 import javax.swing.*;
 import java.awt.*;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import static java.lang.System.*;
@@ -50,9 +48,7 @@ public class Utils {
     public static void printRegistryList(String urlString) {
         try {
             Arrays.stream(Naming.list(urlString)).forEach(out::println);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -68,6 +64,9 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-        out.println(ipAddress());
+        //printInstalledFonts();
+        //printInstalledLookAndFeels();
+        printUIManagerDefaults();
+        //out.println(ipAddress());
     }
 }

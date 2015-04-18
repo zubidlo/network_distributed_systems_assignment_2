@@ -8,8 +8,6 @@ import java.awt.event.*;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.*;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.*;
 import java.util.List;
 import static assignment_2.HelperClasses.Utils.*;
@@ -27,20 +25,12 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     private final Icon icon;
     private volatile String currentText;
 
-    private ChatClient(
-            final String name,
-            final Icon i,
-            String hostname,
-            int port,
-            String rmi_id) throws RemoteException, NotBoundException, MalformedURLException {
+    private ChatClient(Server server, String name, Icon i) throws RemoteException {
+        this.server = server;
         username = name;
         chatView = new ChatViewClassic(String.format("Chat[%s]", username));
         userColor = randColor();
         icon = i;
-        System.out.println("available RMI stubs:");
-        System.setProperty("java.rmi.server.hostname", hostname);
-        printRegistryList(makeRmiUrlString(hostname, port, rmi_id));
-        server = (Server) Naming.lookup(makeRmiUrlString(hostname, port, rmi_id));
         addListeners();
         currentText = " ...connected...";
         server.connect(this);
@@ -115,7 +105,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
         Color backgroundColor = Color.white;
         Color foregroundColor = Color.darkGray;
-        Color selectionBackgroundColor = new Color(255, 102, 0);
+        Color selectionBackgroundColor = new Color(255, 204, 153);
         Font hoboFont = new Font("Hobo std", Font.PLAIN, 14);
         Icon questionMarkIcon = Icons.createIcon("bullet_question.jpg");
 
@@ -125,14 +115,14 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         UIManager.put("Panel.background", backgroundColor);
         UIManager.put("Button.background", backgroundColor);
         UIManager.put("Button.font", hoboFont);
+        UIManager.put("Button.select", selectionBackgroundColor);
         UIManager.put("ComboBox.background", backgroundColor);
         UIManager.put("ComboBox.selectionBackground", selectionBackgroundColor);
         UIManager.put("TextField.selectionBackground", selectionBackgroundColor);
-        UIManager.put("TextField.foreground", selectionBackgroundColor);
-        UIManager.put("TextField.selectionForeground", backgroundColor);
+        UIManager.put("TextField.foreground", foregroundColor);
+        UIManager.put("TextField.selectionForeground", foregroundColor);
         UIManager.put("TextField.font", hoboFont);
         UIManager.put("Label.font", hoboFont);
-
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
@@ -164,6 +154,10 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         int port = Integer.parseInt(args[1]);
         String rmi_id = args[2];
 
-        new ChatClient(username, chosenIcon, hostname, port, rmi_id);
+        System.setProperty("java.rmi.server.hostname", hostname);
+        System.out.print("available RMI stubs: ");
+        printRegistryList(makeRmiUrlString(hostname, port, rmi_id));
+        Server server = (Server) Naming.lookup(makeRmiUrlString(hostname, port, rmi_id));
+        new ChatClient(server, username, chosenIcon);
     }
 }

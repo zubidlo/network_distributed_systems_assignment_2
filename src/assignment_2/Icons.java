@@ -8,17 +8,17 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * automatically creates list of icons from .png files in icons/ dir
+ * automatically creates list of ICONS from .png files in ICONS/ dir
  * images should be of 24x24 pixels size for visual consistency
  * Created by martin on 17/04/2015.
  */
 class Icons {
 
-    private static final List<Icon> icons = new ArrayList<>();
-    private static final String iconsDirName = "assignment_2/icons/";
+    private static final List<Icon> ICONS = new ArrayList<>();
+    private static final String ICONS_FOLDER = "assignment_2/icons/";
 
     static {
-        File folder = new File(getResource(iconsDirName).getPath());
+        File folder = new File(getResource(ICONS_FOLDER).getPath());
 
         File[] files = Arrays.asList(folder.listFiles())
                 .stream()
@@ -27,7 +27,7 @@ class Icons {
 
         Arrays.stream(files)
                 .filter(f -> f.getName().endsWith(".png"))
-                .forEachOrdered(f -> icons.add(new ImageIcon(f.getPath())));
+                .forEachOrdered(f -> ICONS.add(new ImageIcon(f.getPath())));
     }
 
     private static URL getResource(String path) {
@@ -35,24 +35,17 @@ class Icons {
     }
 
     static List<Icon> getAll() {
-        return icons;
+        return ICONS;
     }
 
     static Icon get(int index) {
-        if (index >= icons.size()) throw new IllegalArgumentException("no such icon");
-        else return icons.get(index);
-    }
-
-    static Icon getByFilename(String filename) {
-        return icons.stream()
-                .filter( i -> ((ImageIcon) i).getDescription().equals(filename))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("no such icon"));
+        if (index >= ICONS.size()) throw new IllegalArgumentException("no such icon");
+        else return ICONS.get(index);
     }
 
     static Icon createIcon(String filename) {
-        URL url = getResource(iconsDirName + filename);
-        if(url == null) System.out.println(filename + " not found");
+        URL url = getResource(ICONS_FOLDER + filename);
+        if(url == null) System.err.println(filename + " not found");
         return new ImageIcon(url);
     }
 }
