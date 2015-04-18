@@ -2,6 +2,7 @@ package assignment_2;
 
 import assignment_2.interfaces.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 import java.rmi.*;
@@ -20,17 +21,22 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     private final List<Client> connectedClients;
     private List<Line> lastTwentyLines;
+    private static Icon serverIcon = Icons.createIcon("server.jpg");
 
     private ChatServer(String hostname, int port, String rmi_id) throws RemoteException, AlreadyBoundException {
         connectedClients = new ArrayList<>();
         lastTwentyLines = new ArrayList<>(20);
         bindRegistry(port, rmi_id);
-        System.out.format("chat server is listening at %s:%s%n%n", hostname, String.valueOf(port));
+        log(String.format("Listening at %s:%s%n%n", hostname, String.valueOf(port)));
     }
 
     private void bindRegistry(int port, String rmi_id) throws RemoteException, AlreadyBoundException {
         Registry registry = LocateRegistry.createRegistry(port);
         registry.bind(rmi_id, this);
+    }
+
+    private void log(String logMesage) {
+        out.print(logMesage);
     }
 
     @Override
@@ -40,8 +46,14 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
         updateConnectedClientLists(connectedClients);
         for(Line line : lastTwentyLines)
             c.postMessage(line);
-        c.postMessage(new Line(Icons.getByFilename("server.png"), Color.black, "SERVER", "Welcome to our chat room!"));
-        out.print(String.format("%s is connected. Connected users:%d%n", c.getUserName(), connectedClients.size()));
+
+        c.postMessage(new Line(
+                serverIcon,
+                Color.darkGray,
+                "SERVER",
+                String.format("%s, welcome to our chat room!", c.getUserName())));
+
+        log(String.format("%s is connected. Connected users:%d%n", c.getUserName(), connectedClients.size()));
     }
 
     @Override
@@ -49,7 +61,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
         connectedClients.remove(c);
         updateConnectedClientLists(connectedClients);
         sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), c.getText()));
-        out.print(String.format("%s is disconnected. Connected connectedClients:%d%n", c.getUserName(), connectedClients.size()));
+        log(String.format("%s is disconnected. Connected connectedClients:%d%n", c.getUserName(), connectedClients.size()));
     }
 
     @Override
@@ -64,9 +76,11 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
         for(Client c: connectedClients) c.updateConnectedClientList(connectedClients);
     }
 
-    private void sendToAllClients(Line line) throws RemoteException{
-        for(Client c: connectedClients)
-            c.postMessage(line);
+    private void sendToAllClients(Line line) {
+        if(connectedClients.size() > 0)
+            connectedClients.forEach(c -> {
+                try { c.postMessage(line); } catch (RemoteException e) { e.printStackTrace(); }
+            });
     }
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException {

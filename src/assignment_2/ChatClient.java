@@ -48,9 +48,11 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     private void addListeners() {
         chatView.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                chatView.dispose();
                 disconnectAndExit();
             }
         });
+
         chatView.messageField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) sendText();
@@ -108,7 +110,34 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         return icon;
     }
 
+    private static void setUIManagerDefaults() {
+
+        Color backgroundColor = Color.white;
+        Color foregroundColor = Color.darkGray;
+        Color selectionBackgroundColor = new Color(255, 102, 0);
+        Font hoboFont = new Font("Hobo std", Font.PLAIN, 14);
+        Icon questionMarkIcon = Icons.createIcon("bullet_question.jpg");
+
+        UIManager.put("OptionPane.background", backgroundColor);
+        UIManager.put("OptionPane.messageForeground", foregroundColor);
+        UIManager.put("OptionPane.questionIcon", questionMarkIcon);
+        UIManager.put("Panel.background", backgroundColor);
+        UIManager.put("Button.background", backgroundColor);
+        UIManager.put("Button.font", hoboFont);
+        UIManager.put("ComboBox.background", backgroundColor);
+        UIManager.put("ComboBox.selectionBackground", selectionBackgroundColor);
+        UIManager.put("TextField.selectionBackground", selectionBackgroundColor);
+        UIManager.put("TextField.foreground", selectionBackgroundColor);
+        UIManager.put("TextField.selectionForeground", backgroundColor);
+        UIManager.put("TextField.font", hoboFont);
+        UIManager.put("Label.font", hoboFont);
+
+    }
+
     public static void main(String[] args) throws RemoteException, NotBoundException {
+
+        setUIManagerDefaults();
+
         String username = "anonymous";
         String result = JOptionPane.showInputDialog(
                 null,

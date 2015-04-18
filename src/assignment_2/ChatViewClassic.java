@@ -53,14 +53,43 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     private void setStyles() {
-        userNameStyle.addAttribute(StyleConstants.FontSize, 12);
-        userNameStyle.addAttribute(StyleConstants.FontFamily, "Arial");
-        userNameStyle.addAttribute(StyleConstants.Bold, true);
+        userNameStyle.addAttribute(StyleConstants.FontSize, 14);
+        userNameStyle.addAttribute(StyleConstants.FontFamily, "Hobo Std");
         userNameStyle.addAttribute(StyleConstants.Italic, true);
 
+        textStyle.addAttribute(StyleConstants.Foreground, Color.darkGray);
         textStyle.addAttribute(StyleConstants.FontSize, 14);
         textStyle.addAttribute(StyleConstants.FontFamily, "consolas");
         textStyle.addAttribute(StyleConstants.Bold, false);
+    }
+
+    private void setAndPlaceMessageField() {
+        messageField.setBounds(2, 320, 589, 26);
+        messageField.setBorder(BORDER);
+        messageField.setFont(new Font("consolas", Font.PLAIN, 14));
+        messageField.setForeground(Color.darkGray);
+        messageField.setDocument(new JTextFieldLimiter(73));
+        getContentPane().add(messageField);
+    }
+
+    private void setAndPlaceTextPanes() {
+        chatPane.setEditable(false);
+        chatPane.setBorder(BORDER);
+        JScrollPane chatScrollPane = new JScrollPane(chatPane,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        chatScrollPane.setBounds(2, 18, 434, 300);
+        chatScrollPane.setBorder(BORDER);
+        getContentPane().add(chatScrollPane);
+
+        usersOnlinePane.setEditable(false);
+        usersOnlinePane.setBorder(BORDER);
+        JScrollPane usersOnlineScrollPane = new JScrollPane(usersOnlinePane,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        usersOnlineScrollPane.setBounds(437, 18, 156, 300);
+        usersOnlineScrollPane.setBorder(BORDER);
+        getContentPane().add(usersOnlineScrollPane);
     }
 
     private void insertLinesToChatPane(int i) {
@@ -107,34 +136,6 @@ public class ChatViewClassic extends JFrame implements ChatView {
         }
     }
 
-    private void setAndPlaceTextPanes() {
-        chatPane.setEditable(false);
-        chatPane.setBorder(BORDER);
-        JScrollPane chatScrollPane = new JScrollPane(chatPane,
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        chatScrollPane.setBounds(2, 18, 434, 300);
-        chatScrollPane.setBorder(BORDER);
-        getContentPane().add(chatScrollPane);
-
-        usersOnlinePane.setEditable(false);
-        usersOnlinePane.setBorder(BORDER);
-        JScrollPane usersOnlineScrollPane = new JScrollPane(usersOnlinePane,
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        usersOnlineScrollPane.setBounds(437, 18, 156, 300);
-        usersOnlineScrollPane.setBorder(BORDER);
-        getContentPane().add(usersOnlineScrollPane);
-    }
-
-    private void setAndPlaceMessageField() {
-        messageField.setBounds(2, 320, 589, 26);
-        messageField.setBorder(BORDER);
-        messageField.setFont(new Font("consolas", Font.PLAIN, 14));
-        messageField.setDocument(new JTextFieldLimiter(73));
-        getContentPane().add(messageField);
-    }
-
     private class LookAndFeelMenuItem extends JMenuItem implements ActionListener{
 
         private final LookAndFeelInfo lookAndFeelInfo;
@@ -143,7 +144,6 @@ public class ChatViewClassic extends JFrame implements ChatView {
             super(lookAndFeelInfo.getName());
             this.lookAndFeelInfo = lookAndFeelInfo;
             addActionListener(this);
-            System.out.println("theme: " + lookAndFeelInfo.getClassName());
         }
 
         @Override
@@ -200,17 +200,32 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     private static int rand() {
-        return (int) Math.round(200 * Math.random());
+        return (int) Math.round(150 * Math.random() + 50);
     }
 
-    private static void printInstalledFonts() {
+    public static void printInstalledFonts() {
         Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
+                .forEach(System.out::println);
+    }
+
+    public static void printUIManagerDefaults() {
+        Enumeration keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements())  {
+            Object key = keys.nextElement();
+            System.out.format("%s value:%s%n", key, UIManager.get(key));
+        }
+    }
+
+    public static void printInstalledLookAndFeels() {
+        Arrays.stream(UIManager.getInstalledLookAndFeels())
                 .forEach(System.out::println);
     }
 
     public static void main(String[] args) {
         new ChatViewClassic("frame skeleton");
-        printInstalledFonts();
+        //printInstalledFonts();
+        //printUIManagerDefaults();
+        //printInstalledLookAndFeels();
     }
 
     /**

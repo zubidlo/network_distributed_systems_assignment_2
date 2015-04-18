@@ -5,8 +5,9 @@ compiled with jdk 8
 
 Icons downloaded from:
 
-http://www.iconarchive.com/category/avatar-icons.html
-http://www.rw-designer.com/icon-detail/7523
+http://www.iconarchive.com/show/superhero-avatar-icons-by-hopstarter.html
+https://www.iconfinder.com/icons/174960/server_icon
+https://www.iconfinder.com/icons/49411/question_icon
 
 All credit belongs to artists.
 

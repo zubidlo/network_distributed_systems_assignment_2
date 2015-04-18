@@ -2,6 +2,7 @@ package assignment_2;
 
 import javax.swing.*;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,10 +15,10 @@ import java.util.List;
 class Icons {
 
     private static final List<Icon> icons = new ArrayList<>();
+    private static final String iconsDirName = "assignment_2/icons/";
 
     static {
-        String iconsDirName = "assignment_2/icons/";
-        File folder = new File(Icons.class.getClassLoader().getResource(iconsDirName).getPath());
+        File folder = new File(getResource(iconsDirName).getPath());
 
         File[] files = Arrays.asList(folder.listFiles())
                 .stream()
@@ -26,13 +27,11 @@ class Icons {
 
         Arrays.stream(files)
                 .filter(f -> f.getName().endsWith(".png"))
-                .forEachOrdered(f -> icons.add(getImage(f.getPath())));
+                .forEachOrdered(f -> icons.add(new ImageIcon(f.getPath())));
     }
 
-    private static ImageIcon getImage(String path) {
-        ImageIcon icon =  new ImageIcon(path);
-        icon.setDescription(path.substring(path.lastIndexOf(File.separator) + 1, path.length()));
-        return icon;
+    private static URL getResource(String path) {
+        return Icons.class.getClassLoader().getResource(path);
     }
 
     static List<Icon> getAll() {
@@ -49,5 +48,11 @@ class Icons {
                 .filter( i -> ((ImageIcon) i).getDescription().equals(filename))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("no such icon"));
+    }
+
+    static Icon createIcon(String filename) {
+        URL url = getResource(iconsDirName + filename);
+        if(url == null) System.out.println(filename + " not found");
+        return new ImageIcon(url);
     }
 }
