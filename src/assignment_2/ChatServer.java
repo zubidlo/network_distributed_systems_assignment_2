@@ -26,12 +26,14 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     private List<Line> lastTwentyLines;
     private static Icon serverIcon = Icons.createIcon("server.jpg");
 
-    private ChatServer(String hostname, int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException {
+    private ChatServer(int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException {
         connectedClients = new ArrayList<>();
         lastTwentyLines = new ArrayList<>(20);
         Registry registry = LocateRegistry.createRegistry(port);
-        registry.rebind(hostname, this);
-        log(String.format("Listening at %s:%s%n%n", hostname, String.valueOf(port)));
+        out.println(registry.toString());
+        System.setProperty("java.rmi.server.hostname", hostname());
+        Naming.rebind(makeRmiUrlString(hostname(), port, rmi_id), this);
+        log(String.format("Listening at %s:%s%n%n", hostname(), String.valueOf(port)));
     }
 
     private void log(String logMesage) {
@@ -83,9 +85,8 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     }
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, MalformedURLException {
-        String hostname = args[0];
-        int port = Integer.parseInt(args[1]);
-        String rmi_id = args[2];
-        new ChatServer(hostname, port, rmi_id);
+        int port = Integer.parseInt(args[0]);
+        String rmi_id = args[1];
+        new ChatServer(port, rmi_id);
     }
 }

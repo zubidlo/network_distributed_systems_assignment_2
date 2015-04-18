@@ -1,4 +1,4 @@
-cls
-SET CLASSES="./src;"
-java -cp %CLASSES% assignment_2.ChatClient localhost 1099 chat
+clear
+CLASSES="src"
+java -cp $CLASSES assignment_2.ChatClient 192.168.1.2 1099 chat
 pause

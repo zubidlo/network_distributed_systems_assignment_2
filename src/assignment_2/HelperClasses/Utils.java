@@ -2,7 +2,9 @@ package assignment_2.HelperClasses;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -42,7 +44,7 @@ public class Utils {
     }
 
     public static String makeRmiUrlString(String hostname, int port, String rmi_id) {
-        return String.format("rmi://%s:%d/%s", hostname, port, rmi_id);
+        return "rmi://" +  hostname + ":" + port + "/" + rmi_id;
     }
 
     public static void printRegistryList(String urlString) {
@@ -55,8 +57,17 @@ public class Utils {
         }
     }
 
+    public static String hostname() {
+        String hostname = "localhost";
+        try {
+            hostname = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return hostname;
+    }
+
     public static void main(String[] args) {
-        String urlString = makeRmiUrlString("localhost", 1099, "server");
-        printRegistryList(urlString);
+        out.println(hostname());
     }
 }
