@@ -1,6 +1,5 @@
 package assignment_2;
 
-import assignment_2.HelperClasses.AnchorSocketFactory;
 import assignment_2.interfaces.*;
 
 import javax.swing.*;
@@ -31,10 +30,10 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     private ChatServer(int port, String rmi_id) throws RemoteException, AlreadyBoundException, MalformedURLException, java.net.UnknownHostException {
         connectedClients = new ArrayList<>();
         lastTwentyLines = new ArrayList<>(20);
-        Registry registry = LocateRegistry.createRegistry(port, null, new AnchorSocketFactory(InetAddress.getLocalHost()));
+        Registry registry = LocateRegistry.createRegistry(port);
         out.println(registry.toString());
         System.setProperty("java.rmi.server.ipAddress", ipAddress());
-        registry.rebind(rmi_id, this);
+        Naming.rebind(makeRmiUrlString(ipAddress(), port, rmi_id), this);
         log(String.format("Listening at %s:%s%n%n", ipAddress(), String.valueOf(port)));
     }
 
