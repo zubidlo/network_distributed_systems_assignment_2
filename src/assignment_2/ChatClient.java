@@ -1,5 +1,6 @@
 package assignment_2;
 
+import assignment_2.HelperClasses.Icons;
 import assignment_2.interfaces.*;
 
 import javax.swing.*;

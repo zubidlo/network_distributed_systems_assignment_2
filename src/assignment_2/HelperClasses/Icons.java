@@ -1,4 +1,4 @@
-package assignment_2;
+package assignment_2.HelperClasses;
 
 import javax.swing.*;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.List;
  * images should be of 24x24 pixels size for visual consistency
  * Created by martin on 17/04/2015.
  */
-class Icons {
+public class Icons {
 
     private static final List<Icon> ICONS = new ArrayList<>();
     private static final String ICONS_FOLDER = "assignment_2/icons/";
@@ -34,16 +34,16 @@ class Icons {
         return Icons.class.getClassLoader().getResource(path);
     }
 
-    static List<Icon> getAll() {
+    public static List<Icon> getAll() {
         return ICONS;
     }
 
-    static Icon get(int index) {
+    public static Icon get(int index) {
         if (index >= ICONS.size()) throw new IllegalArgumentException("no such icon");
         else return ICONS.get(index);
     }
 
-    static Icon createIcon(String filename) {
+    public static Icon createIcon(String filename) {
         URL url = getResource(ICONS_FOLDER + filename);
         if(url == null) System.err.println(filename + " not found");
         return new ImageIcon(url);
