@@ -76,11 +76,16 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     }
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, MalformedURLException, UnknownHostException {
+        if(args.length != 1) {
+            out.println("Usage: java ChatServer port");
+            System.exit(-1);
+        }
         int port = Integer.parseInt(args[0]);
-        String rmi_id = args[1];
 
+        String rmiString = makeRmiUrlString(ipAddress(), port, ChatServer.class.getSimpleName());
+        out.println(rmiString);
         out.println(LocateRegistry.createRegistry(port).toString());
         System.setProperty("java.rmi.server.hostname", ipAddress());
-        Naming.rebind(makeRmiUrlString(ipAddress(), port, rmi_id), new ChatServer());
+        Naming.rebind(rmiString, new ChatServer());
     }
 }

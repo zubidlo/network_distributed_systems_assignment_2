@@ -127,6 +127,10 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
+        if(args.length != 3) {
+            System.out.println("Usage: java ChatClient hostname port rmi_id");
+        }
+
         setUIManagerDefaults();
 
         String username = "anonymous";
