@@ -1,6 +1,6 @@
 package assignment_2;
 
-import static assignment_2.HelperClasses.Sounds.*;
+import assignment_2.HelperClasses.*;
 import assignment_2.interfaces.*;
 
 import javax.swing.*;
@@ -12,20 +12,20 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static javax.swing.UIManager.*;
-
 /**
  * Chat View implementation
  * Created by martin on 28/03/2015.
  */
 public class ChatViewClassic extends JFrame implements ChatView {
 
-    public final JTextField messageField;
-    private final StyledDocument chatRoomDocument, usersOnlineDocument;
-    private final JTextPane chatPane, usersOnlinePane;
+    private final JTextField messageField;
+    private final StyledDocument chatRoomDocument, onlineUsersDocument;
+    private final JTextPane chatPane, onlineUsersPane;
     private final Style userNameStyle, textStyle;
     private static final Color BACKGROUND_COLOR = Color.white;
     private static final Border BORDER = new LineBorder(Color.lightGray);
+
+    public JTextField getMessageField() { return messageField; }
 
     /**
      * Creates Chat View
@@ -33,17 +33,19 @@ public class ChatViewClassic extends JFrame implements ChatView {
      * @param onKeyENTER what happens when user hit ENTER
      * @param onEXIT what happens when user clicks on EXIT
      */
-    public ChatViewClassic(String title, KeyListener onKeyENTER, WindowListener onEXIT) {
+    public ChatViewClassic(final String title,
+                           final KeyListener onKeyENTER,
+                           final WindowListener onEXIT) {
         super(title);
         messageField = new JTextField();
         StyleContext styleContext = new StyleContext();
         chatRoomDocument = new DefaultStyledDocument(styleContext);
-        usersOnlineDocument = new DefaultStyledDocument(styleContext);
+        onlineUsersDocument = new DefaultStyledDocument(styleContext);
         userNameStyle = styleContext.addStyle("Username", null);
         textStyle = styleContext.addStyle("Text", null);
         setStyles();
         chatPane = new JTextPane(chatRoomDocument);
-        usersOnlinePane = new JTextPane(usersOnlineDocument);
+        onlineUsersPane = new JTextPane(onlineUsersDocument);
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(themesMenu());
         buildContentPane();
@@ -81,6 +83,11 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     private void setAndPlaceTextPanes() {
+        makeChatPane();
+        makeOnlineUsersPane();
+    }
+
+    private void makeChatPane() {
         chatPane.setEditable(false);
         chatPane.setBorder(BORDER);
         JScrollPane chatScrollPane = new JScrollPane(chatPane,
@@ -89,10 +96,12 @@ public class ChatViewClassic extends JFrame implements ChatView {
         chatScrollPane.setBounds(2, 18, 434, 300);
         chatScrollPane.setBorder(BORDER);
         getContentPane().add(chatScrollPane);
+    }
 
-        usersOnlinePane.setEditable(false);
-        usersOnlinePane.setBorder(BORDER);
-        JScrollPane usersOnlineScrollPane = new JScrollPane(usersOnlinePane,
+    private void makeOnlineUsersPane() {
+        onlineUsersPane.setEditable(false);
+        onlineUsersPane.setBorder(BORDER);
+        JScrollPane usersOnlineScrollPane = new JScrollPane(onlineUsersPane,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         usersOnlineScrollPane.setBounds(437, 18, 156, 300);
@@ -100,7 +109,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
         getContentPane().add(usersOnlineScrollPane);
     }
 
-    private void insertLinesToChatPane(int i) {
+    private void insertLinesToChatPane(final int i) {
         IntStream.range(1,i).forEach(j -> {
             try {
                 chatRoomDocument.insertString(chatRoomDocument.getLength(), "\n", userNameStyle);
@@ -108,7 +117,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
         });
     }
 
-    private void setTheme(String theme) {
+    private void setTheme(final String theme) {
         try {
             UIManager.setLookAndFeel(theme);
             SwingUtilities.updateComponentTreeUI(ChatViewClassic.this);
@@ -146,9 +155,9 @@ public class ChatViewClassic extends JFrame implements ChatView {
 
     private class LookAndFeelMenuItem extends JMenuItem implements ActionListener{
 
-        private final LookAndFeelInfo lookAndFeelInfo;
+        private final UIManager.LookAndFeelInfo lookAndFeelInfo;
 
-        private LookAndFeelMenuItem(final LookAndFeelInfo lookAndFeelInfo) {
+        private LookAndFeelMenuItem(final UIManager.LookAndFeelInfo lookAndFeelInfo) {
             super(lookAndFeelInfo.getName());
             this.lookAndFeelInfo = lookAndFeelInfo;
             addActionListener(this);
@@ -170,7 +179,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
 
     private JMenu themesMenu() {
         JMenu menuLookAndFeel = new JMenu("Themes");
-        Arrays.asList(getInstalledLookAndFeels())
+        Arrays.asList(UIManager.getInstalledLookAndFeels())
                 .forEach(i -> menuLookAndFeel.add(new LookAndFeelMenuItem(i)));
         return menuLookAndFeel;
     }
@@ -178,14 +187,23 @@ public class ChatViewClassic extends JFrame implements ChatView {
     private static final String messageArrived = "button.wav";
 
     @Override
-    public void print(Line chatLine) {
-        playSound(messageArrived);
+    public void print(final Line chatLine) {
+        Sounds.playSound(messageArrived);
         userNameStyle.addAttribute(StyleConstants.Foreground, chatLine.getColor());
         try {
             chatPane.setCaretPosition(chatRoomDocument.getLength());
             chatPane.insertIcon(chatLine.getIcon());
-            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("[%s]>  ", chatLine.getName()), userNameStyle);
-            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("%s%n", chatLine.getText()), textStyle);
+
+            chatRoomDocument.insertString(
+                    chatRoomDocument.getLength(),
+                    String.format("[%s]>  ", chatLine.getName()),
+                    userNameStyle);
+
+            chatRoomDocument.insertString(
+                    chatRoomDocument.getLength(),
+                    String.format("%s%n", chatLine.getText()),
+                    textStyle);
+
             chatPane.setCaretPosition(chatRoomDocument.getLength());
         } catch (BadLocationException e) {
             e.printStackTrace();
@@ -193,13 +211,18 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     @Override
-    public void print(List<Client> onlineClients) {
+    public void print(final List<Client> onlineClients) {
         try {
-            usersOnlineDocument.remove(0, usersOnlineDocument.getLength());
+            onlineUsersDocument.remove(0, onlineUsersDocument.getLength());
             for(Client c : onlineClients) {
                 userNameStyle.addAttribute(StyleConstants.Foreground, c.getColor());
-                usersOnlineDocument.insertString(0, String.format("%s%n", c.getUserName()), userNameStyle);
-                usersOnlinePane.insertIcon(c.getIcon());
+
+                onlineUsersDocument.insertString(
+                        0,
+                        String.format("%s%n", c.getUserName()),
+                        userNameStyle);
+
+                onlineUsersPane.insertIcon(c.getIcon());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -223,7 +246,8 @@ public class ChatViewClassic extends JFrame implements ChatView {
             this.limit = limit;
         }
 
-        public void insertString( int offset, String str, AttributeSet attr) throws BadLocationException {
+        public void insertString(final int offset, final String str, final AttributeSet attr)
+                throws BadLocationException {
             if (str == null) return;
             if ((getLength() + str.length()) <= limit) {
                 super.insertString(offset, str, attr);

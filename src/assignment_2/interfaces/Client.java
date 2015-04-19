@@ -10,8 +10,8 @@ import java.util.List;
  * Created by martin on 14/04/2015.
  */
 public interface Client extends Remote {
-    void print(Line chatLine) throws RemoteException;
-    void print(List<Client> connectedClients) throws RemoteException;
+    void print(final Line chatLine) throws RemoteException;
+    void print(final List<Client> connectedClients) throws RemoteException;
     Icon getIcon() throws RemoteException;
     Color getColor() throws RemoteException;
     String getUserName() throws RemoteException;

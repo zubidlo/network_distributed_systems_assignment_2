@@ -7,6 +7,6 @@ import java.util.List;
  * Created by martin on 16/04/2015.
  */
 public interface ChatView {
-    void print(Line chatLine);
-    void print(List<Client> onlineClients);
+    void print(final Line chatLine);
+    void print(final List<Client> onlineClients);
 }

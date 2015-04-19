@@ -3,9 +3,7 @@ package assignment_2.HelperClasses;
 import javax.swing.*;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * automatically creates list of ICONS from .png files in ICONS/ dir
@@ -30,7 +28,7 @@ public class Icons {
                 .forEachOrdered(f -> ICONS.add(new ImageIcon(f.getPath())));
     }
 
-    private static URL getResource(String path) {
+    private static URL getResource(final String path) {
         return Icons.class.getClassLoader().getResource(path);
     }
 
@@ -38,12 +36,12 @@ public class Icons {
         return ICONS;
     }
 
-    public static Icon get(int index) {
+    public static Icon get(final int index) {
         if (index >= ICONS.size()) throw new IllegalArgumentException("no such icon");
         else return ICONS.get(index);
     }
 
-    public static Icon createIcon(String filename) {
+    public static Icon createIcon(final String filename) {
         URL url = getResource(ICONS_FOLDER + filename);
         if(url == null) System.err.println(filename + " not found");
         return new ImageIcon(url);

@@ -1,7 +1,5 @@
 package assignment_2.interfaces;
 
-import assignment_2.ChatLine;
-
 import java.rmi.*;
 
 /**
@@ -9,7 +7,7 @@ import java.rmi.*;
  * Created by martin on 14/04/2015.
  */
 public interface Server extends Remote {
-    void connect(Client client) throws RemoteException;
-    void disconnect(Client client) throws RemoteException;
-    void send(Line chatLine) throws RemoteException;
+    void connect(final Client client) throws RemoteException;
+    void disconnect(final Client client) throws RemoteException;
+    void send(final Line chatLine) throws RemoteException;
 }

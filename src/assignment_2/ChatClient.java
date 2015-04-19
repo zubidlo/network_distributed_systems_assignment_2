@@ -1,6 +1,6 @@
 package assignment_2;
 
-import assignment_2.HelperClasses.Icons;
+import assignment_2.HelperClasses.*;
 import assignment_2.interfaces.*;
 
 import javax.swing.*;
@@ -11,7 +11,6 @@ import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.List;
-import static assignment_2.HelperClasses.Utils.*;
 
 /**
  * Client implementation
@@ -25,10 +24,11 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     private final Color userColor;
     private final Icon icon;
 
-    private ChatClient(Server server, String name, Icon i) throws RemoteException {
+    private ChatClient(final Server server, final String name, final Icon i)
+            throws RemoteException {
         this.server = server;
         username = name;
-        userColor = randColor();
+        userColor = Utils.randColor();
         icon = i;
         chatView = makeChatView();
         server.connect(this);
@@ -62,20 +62,20 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private void sendText() {
         try {
-            server.send(new ChatLine(icon, userColor, username, chatView.messageField.getText()));
-            chatView.messageField.setText("");
+            server.send(new ChatLine(icon, userColor, username, chatView.getMessageField().getText()));
+            chatView.getMessageField().setText("");
         } catch (RemoteException ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
-    public void print(Line chatLine) throws RemoteException {
+    public void print(final Line chatLine) throws RemoteException {
         chatView.print(chatLine);
     }
 
     @Override
-    public void print(List<Client> connectedClients) throws RemoteException {
+    public void print(final List<Client> connectedClients) throws RemoteException {
         chatView.print(connectedClients);
     }
 
@@ -94,37 +94,14 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         return icon;
     }
 
-    private static void setUIManagerDefaults() {
-
-        Color backgroundColor = Color.white;
-        Color foregroundColor = Color.darkGray;
-        Color selectionBackgroundColor = new Color(255, 204, 153);
-        Font hoboFont = new Font("Hobo std", Font.PLAIN, 14);
-        Icon questionMarkIcon = Icons.createIcon("bullet_question.jpg");
-
-        UIManager.put("OptionPane.background", backgroundColor);
-        UIManager.put("OptionPane.messageForeground", foregroundColor);
-        UIManager.put("OptionPane.questionIcon", questionMarkIcon);
-        UIManager.put("Panel.background", backgroundColor);
-        UIManager.put("Button.background", backgroundColor);
-        UIManager.put("Button.font", hoboFont);
-        UIManager.put("Button.select", selectionBackgroundColor);
-        UIManager.put("ComboBox.background", backgroundColor);
-        UIManager.put("ComboBox.selectionBackground", selectionBackgroundColor);
-        UIManager.put("TextField.selectionBackground", selectionBackgroundColor);
-        UIManager.put("TextField.foreground", foregroundColor);
-        UIManager.put("TextField.selectionForeground", foregroundColor);
-        UIManager.put("TextField.font", hoboFont);
-        UIManager.put("Label.font", hoboFont);
-    }
-
-    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
+    public static void main(String[] args)
+            throws RemoteException, NotBoundException, MalformedURLException {
 
         if(args.length != 3) {
             System.out.println("Usage: java ChatClient hostname port rmi_id");
         }
 
-        setUIManagerDefaults();
+        Utils.setUIManagerDefaults();
 
         String username = "anonymous";
         String result = JOptionPane.showInputDialog(
@@ -152,8 +129,8 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         String rmi_id = args[2];
 
         System.out.print("available RMI stubs: ");
-        printRegistryList(makeRmiUrlString(hostname, port, rmi_id));
-        Server server = (Server) Naming.lookup(makeRmiUrlString(hostname, port, rmi_id));
+        Utils.printRegistryList(Utils.makeRmiUrlString(hostname, port, rmi_id));
+        Server server = (Server) Naming.lookup(Utils.makeRmiUrlString(hostname, port, rmi_id));
         new ChatClient(server, username, chosenIcon);
     }
 }

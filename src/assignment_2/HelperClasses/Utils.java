@@ -41,11 +41,11 @@ public class Utils {
                 .forEach(System.out::println);
     }
 
-    public static String makeRmiUrlString(String hostname, int port, String rmi_id) {
+    public static String makeRmiUrlString(final String hostname,final int port,final String rmi_id) {
         return "rmi://" +  hostname + ":" + port + "/" + rmi_id;
     }
 
-    public static void printRegistryList(String urlString) {
+    public static void printRegistryList(final String urlString) {
         try {
             Arrays.stream(Naming.list(urlString)).forEach(out::println);
         } catch (Exception e) {
@@ -61,6 +61,30 @@ public class Utils {
             e.printStackTrace();
         }
         return hostname;
+    }
+
+    public static void setUIManagerDefaults() {
+
+        Color backgroundColor = Color.white;
+        Color foregroundColor = Color.darkGray;
+        Color selectionBackgroundColor = new Color(255, 204, 153);
+        Font hoboFont = new Font("Hobo std", Font.PLAIN, 14);
+        Icon questionMarkIcon = Icons.createIcon("bullet_question.jpg");
+
+        UIManager.put("OptionPane.background", backgroundColor);
+        UIManager.put("OptionPane.messageForeground", foregroundColor);
+        UIManager.put("OptionPane.questionIcon", questionMarkIcon);
+        UIManager.put("Panel.background", backgroundColor);
+        UIManager.put("Button.background", backgroundColor);
+        UIManager.put("Button.font", hoboFont);
+        UIManager.put("Button.select", selectionBackgroundColor);
+        UIManager.put("ComboBox.background", backgroundColor);
+        UIManager.put("ComboBox.selectionBackground", selectionBackgroundColor);
+        UIManager.put("TextField.selectionBackground", selectionBackgroundColor);
+        UIManager.put("TextField.foreground", foregroundColor);
+        UIManager.put("TextField.selectionForeground", foregroundColor);
+        UIManager.put("TextField.font", hoboFont);
+        UIManager.put("Label.font", hoboFont);
     }
 
     public static void main(String[] args) {

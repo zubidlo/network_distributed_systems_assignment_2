@@ -16,7 +16,12 @@ public final class ChatLine implements Line {
     private final String name;
     private final String text;
 
-    public ChatLine(Icon icon, Color color, String name, String text) {
+    public ChatLine(
+            final Icon icon,
+            final Color color,
+            final String name,
+            final String text) {
+
         this.icon = icon;
         this.color = color;
         this.name = name;
