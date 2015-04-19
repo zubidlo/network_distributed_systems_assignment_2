@@ -1,21 +1,22 @@
 package assignment_2;
 
+import assignment_2.interfaces.Line;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.Serializable;
 
 /**
  * chat pane line bean
  * Created by martin on 17/04/2015.
  */
-public final class Line implements Serializable{
+public final class ChatLine implements Line {
 
     private final Icon icon;
     private final Color color;
     private final String name;
     private final String text;
 
-    public Line(Icon icon, Color color, String name, String text) {
+    public ChatLine(Icon icon, Color color, String name, String text) {
         this.icon = icon;
         this.color = color;
         this.name = name;

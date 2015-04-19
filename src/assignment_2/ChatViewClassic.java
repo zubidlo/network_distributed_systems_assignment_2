@@ -2,6 +2,7 @@ package assignment_2;
 
 import assignment_2.interfaces.ChatView;
 import assignment_2.interfaces.Client;
+import assignment_2.interfaces.Line;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -15,7 +16,7 @@ import java.util.stream.IntStream;
 import static javax.swing.UIManager.*;
 
 /**
- * JFrame skeleton with theme changing menu
+ * Chat View implementation
  * Created by martin on 28/03/2015.
  */
 public class ChatViewClassic extends JFrame implements ChatView {
@@ -27,7 +28,13 @@ public class ChatViewClassic extends JFrame implements ChatView {
     private static final Color BACKGROUND_COLOR = Color.white;
     private static final Border BORDER = new LineBorder(Color.lightGray);
 
-    public ChatViewClassic(String title) {
+    /**
+     * Creates Chat View
+     * @param title text to window banner
+     * @param onKeyENTER what happens when user hit ENTER
+     * @param onEXIT what happens when user clicks on EXIT
+     */
+    public ChatViewClassic(String title, KeyListener onKeyENTER, WindowListener onEXIT) {
         super(title);
         messageField = new JTextField();
         StyleContext styleContext = new StyleContext();
@@ -49,6 +56,8 @@ public class ChatViewClassic extends JFrame implements ChatView {
         setResizable(false);
         insertLinesToChatPane(19);
         setVisible(true);
+        messageField.addKeyListener(onKeyENTER);
+        this.addWindowListener(onEXIT);
         messageField.requestFocus();
     }
 
@@ -168,13 +177,13 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     @Override
-    public void print(Line line) {
-        userNameStyle.addAttribute(StyleConstants.Foreground, line.getColor());
+    public void print(Line chatLine) {
+        userNameStyle.addAttribute(StyleConstants.Foreground, chatLine.getColor());
         try {
             chatPane.setCaretPosition(chatRoomDocument.getLength());
-            chatPane.insertIcon(line.getIcon());
-            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("[%s]>  ", line.getName()), userNameStyle);
-            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("%s%n", line.getText()), textStyle);
+            chatPane.insertIcon(chatLine.getIcon());
+            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("[%s]>  ", chatLine.getName()), userNameStyle);
+            chatRoomDocument.insertString(chatRoomDocument.getLength(), String.format("%s%n", chatLine.getText()), textStyle);
             chatPane.setCaretPosition(chatRoomDocument.getLength());
         } catch (BadLocationException e) {
             e.printStackTrace();
@@ -196,13 +205,17 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     /**
-     * Document adjustment
+     * text field limiter
      * Created by martin on 15/04/2015.
      */
     public class JTextFieldLimiter extends PlainDocument {
 
         private final int limit;
 
+        /**
+         * Limits number of characters entered to text field
+         * @param limit max of characters
+         */
         public JTextFieldLimiter(final int limit) {
             super();
             this.limit = limit;

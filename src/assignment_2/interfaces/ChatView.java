@@ -1,7 +1,5 @@
 package assignment_2.interfaces;
 
-import assignment_2.Line;
-
 import java.util.List;
 
 /**
@@ -9,6 +7,6 @@ import java.util.List;
  * Created by martin on 16/04/2015.
  */
 public interface ChatView {
-    void print(Line line);
+    void print(Line chatLine);
     void print(List<Client> onlineClients);
 }

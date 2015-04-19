@@ -27,26 +27,27 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     private ChatClient(Server server, String name, Icon i) throws RemoteException {
         this.server = server;
         username = name;
-        chatView = new ChatViewClassic(String.format("Chat[%s]", username));
         userColor = randColor();
         icon = i;
-        addListeners();
+        chatView = makeChatView();
         server.connect(this);
     }
 
-    private void addListeners() {
-        chatView.addWindowListener(new WindowAdapter() {
+    private ChatViewClassic makeChatView() {
+        KeyListener onENTER = new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) sendText();
+            }
+        };
+
+        WindowListener onEXIT = new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 chatView.dispose();
                 disconnectAndExit();
             }
-        });
+        };
 
-        chatView.messageField.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) sendText();
-            }
-        });
+        return new ChatViewClassic(String.format("Chat[%s]", username), onENTER, onEXIT);
     }
 
     private void disconnectAndExit() {
@@ -60,7 +61,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private void sendText() {
         try {
-            server.send(new Line(icon, userColor, username, chatView.messageField.getText()));
+            server.send(new ChatLine(icon, userColor, username, chatView.messageField.getText()));
             chatView.messageField.setText("");
         } catch (RemoteException ex) {
             ex.printStackTrace();
@@ -68,8 +69,8 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     }
 
     @Override
-    public void print(Line line) throws RemoteException {
-        chatView.print(line);
+    public void print(Line chatLine) throws RemoteException {
+        chatView.print(chatLine);
     }
 
     @Override

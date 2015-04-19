@@ -24,22 +24,22 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     private final static Icon SERVER_ICON = Icons.createIcon("server.jpg");
     private final List<Client> connectedClients;
-    private List<Line> lastTwentyLines;
+    private List<Line> lastTwentyChatLines;
 
     private ChatServer() throws RemoteException {
         connectedClients = new ArrayList<>();
-        lastTwentyLines = new ArrayList<>(20);
+        lastTwentyChatLines = new ArrayList<>(20);
     }
 
     @Override
     public synchronized void connect(Client c) throws RemoteException {
-        sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), "...connected..."));
+        sendToAllClients(new ChatLine(c.getIcon(), c.getColor(), c.getUserName(), "...connected..."));
         connectedClients.add(c);
         updateConnectedClientLists(connectedClients);
-        for(Line line : lastTwentyLines)
-            c.print(line);
+        for(Line chatLine : lastTwentyChatLines)
+            c.print(chatLine);
 
-        c.print(new Line(
+        c.print(new ChatLine(
                 SERVER_ICON,
                 Color.darkGray,
                 "SERVER",
@@ -52,27 +52,27 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     public synchronized void disconnect(Client c) throws RemoteException {
         connectedClients.remove(c);
         updateConnectedClientLists(connectedClients);
-        sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), "...disconnected..."));
+        sendToAllClients(new ChatLine(c.getIcon(), c.getColor(), c.getUserName(), "...disconnected..."));
         out.format("%s is disconnected. Connected connectedClients:%d%n", c.getUserName(), connectedClients.size());
     }
 
     @Override
-    public synchronized void send(Line line) throws RemoteException {
-        lastTwentyLines.add(line);
-        if(lastTwentyLines.size() > 20)
-            lastTwentyLines = new ArrayList<>(lastTwentyLines.subList(1, 21));
-        sendToAllClients(line);
+    public synchronized void send(Line chatLine) throws RemoteException {
+        lastTwentyChatLines.add(chatLine);
+        if(lastTwentyChatLines.size() > 20)
+            lastTwentyChatLines = new ArrayList<>(lastTwentyChatLines.subList(1, 21));
+        sendToAllClients(chatLine);
     }
 
     private void updateConnectedClientLists(List<Client> connectedClients) throws RemoteException{
         for(Client c: connectedClients) c.print(connectedClients);
     }
 
-    private void sendToAllClients(Line line) {
+    private void sendToAllClients(Line chatLine) {
         if(connectedClients.size() > 0)
             connectedClients.forEach(c -> {
                 try {
-                    c.print(line);
+                    c.print(chatLine);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
