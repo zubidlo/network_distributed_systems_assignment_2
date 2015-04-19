@@ -33,13 +33,13 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     @Override
     public synchronized void connect(Client c) throws RemoteException {
-        sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), c.getText()));
+        sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), "...connected..."));
         connectedClients.add(c);
         updateConnectedClientLists(connectedClients);
         for(Line line : lastTwentyLines)
-            c.postMessage(line);
+            c.print(line);
 
-        c.postMessage(new Line(
+        c.print(new Line(
                 SERVER_ICON,
                 Color.darkGray,
                 "SERVER",
@@ -52,7 +52,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     public synchronized void disconnect(Client c) throws RemoteException {
         connectedClients.remove(c);
         updateConnectedClientLists(connectedClients);
-        sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), c.getText()));
+        sendToAllClients(new Line(c.getIcon(), c.getColor(), c.getUserName(), "...disconnected..."));
         out.format("%s is disconnected. Connected connectedClients:%d%n", c.getUserName(), connectedClients.size());
     }
 
@@ -65,13 +65,17 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     }
 
     private void updateConnectedClientLists(List<Client> connectedClients) throws RemoteException{
-        for(Client c: connectedClients) c.updateConnectedClientList(connectedClients);
+        for(Client c: connectedClients) c.print(connectedClients);
     }
 
     private void sendToAllClients(Line line) {
         if(connectedClients.size() > 0)
             connectedClients.forEach(c -> {
-                try { c.postMessage(line); } catch (RemoteException e) { e.printStackTrace(); }
+                try {
+                    c.print(line);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             });
     }
 

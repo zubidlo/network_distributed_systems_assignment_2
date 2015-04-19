@@ -8,7 +8,7 @@ import java.io.Serializable;
  * chat pane line bean
  * Created by martin on 17/04/2015.
  */
-public class Line implements Serializable{
+public final class Line implements Serializable{
 
     private final Icon icon;
     private final Color color;
@@ -22,19 +22,14 @@ public class Line implements Serializable{
         this.text = text;
     }
 
-    public Icon getIcon() {
+    public final Icon getIcon() {
         return icon;
     }
-
-    public Color getColor() {
+    public final Color getColor() {
         return color;
     }
-
-    public String getName() {
+    public final String getName() {
         return name;
     }
-
-    public String getText() {
-        return text;
-    }
+    public final String getText() { return text; }
 }

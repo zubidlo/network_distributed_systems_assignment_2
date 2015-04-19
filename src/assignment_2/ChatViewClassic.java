@@ -168,7 +168,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     @Override
-    public void postMessage(Line line) {
+    public void print(Line line) {
         userNameStyle.addAttribute(StyleConstants.Foreground, line.getColor());
         try {
             chatPane.setCaretPosition(chatRoomDocument.getLength());
@@ -182,7 +182,7 @@ public class ChatViewClassic extends JFrame implements ChatView {
     }
 
     @Override
-    public void updateConnectedUsers(List<Client> onlineClients) {
+    public void print(List<Client> onlineClients) {
         try {
             usersOnlineDocument.remove(0, usersOnlineDocument.getLength());
             for(Client c : onlineClients) {

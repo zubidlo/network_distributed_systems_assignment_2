@@ -12,10 +12,9 @@ import java.util.List;
  * Created by martin on 14/04/2015.
  */
 public interface Client extends Remote {
-    void postMessage(Line line) throws RemoteException;
-    void updateConnectedClientList(List<Client> connectedClients) throws RemoteException;
-    String getUserName() throws RemoteException;
-    Color getColor() throws RemoteException;
-    String getText() throws RemoteException;
+    void print(Line line) throws RemoteException;
+    void print(List<Client> connectedClients) throws RemoteException;
     Icon getIcon() throws RemoteException;
+    Color getColor() throws RemoteException;
+    String getUserName() throws RemoteException;
 }

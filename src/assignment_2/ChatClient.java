@@ -23,7 +23,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     private final String username;
     private final Color userColor;
     private final Icon icon;
-    private volatile String currentText;
 
     private ChatClient(Server server, String name, Icon i) throws RemoteException {
         this.server = server;
@@ -32,7 +31,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         userColor = randColor();
         icon = i;
         addListeners();
-        currentText = " ...connected...";
         server.connect(this);
     }
 
@@ -53,7 +51,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private void disconnectAndExit() {
         try {
-            currentText = " ...disconnected...";
             server.disconnect(this);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -63,8 +60,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
     private void sendText() {
         try {
-            currentText = chatView.messageField.getText();
-            server.send(new Line(icon, userColor, username, currentText));
+            server.send(new Line(icon, userColor, username, chatView.messageField.getText()));
             chatView.messageField.setText("");
         } catch (RemoteException ex) {
             ex.printStackTrace();
@@ -72,13 +68,13 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     }
 
     @Override
-    public void postMessage(Line line) throws RemoteException {
-        chatView.postMessage(line);
+    public void print(Line line) throws RemoteException {
+        chatView.print(line);
     }
 
     @Override
-    public void updateConnectedClientList(List<Client> connectedClients) throws RemoteException {
-        chatView.updateConnectedUsers(connectedClients);
+    public void print(List<Client> connectedClients) throws RemoteException {
+        chatView.print(connectedClients);
     }
 
     @Override
@@ -89,11 +85,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     @Override
     public Color getColor() throws RemoteException {
         return userColor;
-    }
-
-    @Override
-    public String getText() throws RemoteException {
-        return currentText;
     }
 
     @Override

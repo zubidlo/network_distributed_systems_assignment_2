@@ -9,6 +9,6 @@ import java.util.List;
  * Created by martin on 16/04/2015.
  */
 public interface ChatView {
-    void postMessage(Line line);
-    void updateConnectedUsers(List<Client> onlineClients);
+    void print(Line line);
+    void print(List<Client> onlineClients);
 }
