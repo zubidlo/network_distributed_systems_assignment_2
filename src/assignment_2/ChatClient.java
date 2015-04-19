@@ -149,7 +149,6 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         int port = Integer.parseInt(args[1]);
         String rmi_id = args[2];
 
-        System.setProperty("java.rmi.server.hostname", hostname);
         System.out.print("available RMI stubs: ");
         printRegistryList(makeRmiUrlString(hostname, port, rmi_id));
         Server server = (Server) Naming.lookup(makeRmiUrlString(hostname, port, rmi_id));
