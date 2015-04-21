@@ -30,30 +30,14 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
         username = name;
         userColor = Utils.randColor();
         icon = i;
-        chatView = makeChatView();
+        chatView = new ChatViewClassic("Chat " + username, this::sendText, this::disconnectAndExit);
         server.connect(this);
-    }
-
-    private ChatViewClassic makeChatView() {
-        KeyListener onENTER = new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) sendText();
-            }
-        };
-
-        WindowListener onEXIT = new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                chatView.dispose();
-                disconnectAndExit();
-            }
-        };
-
-        return new ChatViewClassic(String.format("Chat[%s]", username), onENTER, onEXIT);
     }
 
     private void disconnectAndExit() {
         try {
             server.disconnect(this);
+            chatView.dispose();
         } catch (RemoteException e) {
             e.printStackTrace();
         }

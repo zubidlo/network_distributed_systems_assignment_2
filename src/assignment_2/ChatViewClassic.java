@@ -34,8 +34,8 @@ public class ChatViewClassic extends JFrame implements ChatView {
      * @param onEXIT what happens when user clicks on EXIT
      */
     public ChatViewClassic(final String title,
-                           final KeyListener onKeyENTER,
-                           final WindowListener onEXIT) {
+                           final VoidMethod onKeyENTER,
+                           final VoidMethod onEXIT) {
         super(title);
         messageField = new JTextField();
         StyleContext styleContext = new StyleContext();
@@ -56,9 +56,21 @@ public class ChatViewClassic extends JFrame implements ChatView {
         setSize(600, 400);
         setResizable(false);
         insertLinesToChatPane(19);
+
+        messageField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) onKeyENTER.run();
+            }
+        });
+
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                onEXIT.run();
+            }
+        });
+
         setVisible(true);
-        messageField.addKeyListener(onKeyENTER);
-        this.addWindowListener(onEXIT);
         messageField.requestFocus();
     }
 
@@ -253,5 +265,13 @@ public class ChatViewClassic extends JFrame implements ChatView {
                 super.insertString(offset, str, attr);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        new ChatViewClassic(
+                "Chat View",
+                () -> System.out.println("Enter is working"),
+                () -> System.exit(0)
+        );
     }
 }
