@@ -13,6 +13,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.lang.System.out;
 
@@ -27,12 +28,12 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     private List<Line> lastTwentyChatLines;
 
     private ChatServer() throws RemoteException {
-        connectedClients = new ArrayList<>();
-        lastTwentyChatLines = new ArrayList<>(20);
+        connectedClients = new CopyOnWriteArrayList<>();
+        lastTwentyChatLines = new CopyOnWriteArrayList<>();
     }
 
     @Override
-    public synchronized void connect(Client c) throws RemoteException {
+    public void connect(Client c) throws RemoteException {
         sendToAllClients(new ChatLine(
                         c.getIcon(),
                         c.getColor(),
@@ -57,7 +58,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     }
 
     @Override
-    public synchronized void disconnect(Client c) throws RemoteException {
+    public void disconnect(Client c) throws RemoteException {
         connectedClients.remove(c);
         updateConnectedClientLists(connectedClients);
         sendToAllClients(new ChatLine(
@@ -73,10 +74,10 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     }
 
     @Override
-    public synchronized void send(Line chatLine) throws RemoteException {
+    public void send(Line chatLine) throws RemoteException {
         lastTwentyChatLines.add(chatLine);
         if(lastTwentyChatLines.size() > 20)
-            lastTwentyChatLines = new ArrayList<>(lastTwentyChatLines.subList(1, 21));
+            lastTwentyChatLines = new CopyOnWriteArrayList<>(lastTwentyChatLines.subList(1, 21));
         sendToAllClients(chatLine);
     }
 
