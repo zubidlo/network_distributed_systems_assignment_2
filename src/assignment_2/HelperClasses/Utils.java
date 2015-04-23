@@ -15,6 +15,11 @@ import static java.lang.System.*;
  */
 public class Utils {
 
+    // Suppress default constructor for noninstantiability
+    private Utils() {
+        throw new AssertionError();
+    }
+
     public static Color randColor() {
         return new Color(rand(), rand(), rand());
     }

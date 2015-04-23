@@ -25,7 +25,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     private final static Icon SERVER_ICON = Icons.createIcon("server.jpg");
     private final List<Client> connectedClients;
-    private List<Line> lastTwentyChatLines;
+    private final List<Line> lastTwentyChatLines;
 
     private ChatServer() throws RemoteException {
         connectedClients = new CopyOnWriteArrayList<>();
@@ -77,7 +77,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     public void send(Line chatLine) throws RemoteException {
         lastTwentyChatLines.add(chatLine);
         if(lastTwentyChatLines.size() > 20)
-            lastTwentyChatLines = new CopyOnWriteArrayList<>(lastTwentyChatLines.subList(1, 21));
+            lastTwentyChatLines.retainAll(lastTwentyChatLines.subList(1, 21));
         sendToAllClients(chatLine);
     }
 
