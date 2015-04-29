@@ -1,6 +1,6 @@
-network distributed systems assignment_2
+# network distributed systems assignment_2
 
-author Martin Zuber 16.5.2015
+_author_ Martin Zuber 16.5.2015
 compiled with jdk 8
 
 Icons downloaded from:
@@ -16,7 +16,7 @@ All credit belongs to artists.
 
 
 HOWTO:
-download and then run "0_compile_all.bat"
-after compilation run "1_run_ChatServer.bat"
-when server starts it outputs it's rmiURI in console
-when server is running you can start any number of clients with "2_run_ChatClient.bat" assuming that you edited rmiURI argument in it
+..*download and then run "0_compile_all.bat"
+..*after compilation run "1_run_ChatServer.bat"
+..*when server starts it outputs it's rmiURI in console
+..*when server is running you can start any number of clients with "2_run_ChatClient.bat" assuming that you edited rmiURI argument in it
