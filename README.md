@@ -4,12 +4,12 @@ _author:_ Martin Zuber 16.5.2015
 compiled with jdk 8  
 
 Icons downloaded from:  
-[http://www.iconarchive.com/show/superhero-avatar-icons-by-hopstarter.html]  
-[https://www.iconfinder.com/icons/174960/server_icon]  
-[https://www.iconfinder.com/icons/49411/question_icon]  
+[Iconset: Avengers Superhero Avatar ](http://www.iconarchive.com/show/superhero-avatar-icons-by-hopstarter.html)  
+[Server icon](https://www.iconfinder.com/icons/174960/server_icon)  
+[Question icon](https://www.iconfinder.com/icons/49411/question_icon)  
 
 Sounds downloaded from:  
-http://www.soundjay.com/button-sounds-2.html  
+[Button Sounds](http://www.soundjay.com/button-sounds-2.html)  
 
 **All the credits belong to the artists.**  
 
