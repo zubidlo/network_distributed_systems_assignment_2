@@ -17,5 +17,5 @@ http://www.soundjay.com/button-sounds-2.html
 **HOWTO**:  
 1.download and then run **0_compile_all.bat**    
 2.after compilation run **1_run_ChatServer.bat**  
-3.when server starts it outputs it's **rmiURI* in console  
+3.when server starts it outputs it's **rmiURI* in console**  
 4.when server is running you can start any number of clients with **2_run_ChatClient.bat** assuming that you edited **rmiURI** argument in it  
