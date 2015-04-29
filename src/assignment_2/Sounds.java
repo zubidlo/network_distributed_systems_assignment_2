@@ -1,4 +1,4 @@
-package assignment_2.HelperClasses;
+package assignment_2;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -8,11 +8,11 @@ import javax.sound.sampled.Clip;
  * sound player
  * Created by martin on 19/04/2015.
  */
-public class Sounds {
+class Sounds {
 
     private static final String soundFolder = "assignment_2/sounds/";
 
-    public static synchronized void playSound(final String filename) {
+    static synchronized void playSound(final String filename) {
         new Thread(() -> {
             try {
                 Clip clip = AudioSystem.getClip();

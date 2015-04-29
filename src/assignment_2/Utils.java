@@ -1,4 +1,4 @@
-package assignment_2.HelperClasses;
+package assignment_2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,14 +13,14 @@ import static java.lang.System.*;
  * useful utilities
  * Created by martin on 18/04/2015.
  */
-public class Utils {
+class Utils {
 
     // Suppress default constructor for noninstantiability
     private Utils() {
         throw new AssertionError();
     }
 
-    public static Color randColor() {
+    static Color randColor() {
         return new Color(rand(), rand(), rand());
     }
 
@@ -28,12 +28,12 @@ public class Utils {
         return (int) Math.round(150 * Math.random() + 50);
     }
 
-    public static void printInstalledFonts() {
+    static void printInstalledFonts() {
         Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
                 .forEach(System.out::println);
     }
 
-    public static void printUIManagerDefaults() {
+    static void printUIManagerDefaults() {
         Enumeration keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements())  {
             Object key = keys.nextElement();
@@ -41,16 +41,16 @@ public class Utils {
         }
     }
 
-    public static void printInstalledLookAndFeels() {
+    static void printInstalledLookAndFeels() {
         Arrays.stream(UIManager.getInstalledLookAndFeels())
                 .forEach(System.out::println);
     }
 
-    public static String makeRmiUrlString(final String hostname,final int port,final String rmi_id) {
+    static String makeRmiUrlString(final String hostname,final int port,final String rmi_id) {
         return "rmi://" +  hostname + ":" + port + "/" + rmi_id;
     }
 
-    public static void printRegistryList(final String urlString) {
+    static void printRegistryList(final String urlString) {
         try {
             Arrays.stream(Naming.list(urlString)).forEach(out::println);
         } catch (Exception e) {
@@ -58,7 +58,7 @@ public class Utils {
         }
     }
 
-    public static String ipAddress() {
+    static String ipAddress() {
         String hostname = "localhost";
         try {
             hostname = InetAddress.getLocalHost().getHostAddress();
@@ -68,7 +68,7 @@ public class Utils {
         return hostname;
     }
 
-    public static void setUIManagerDefaults() {
+    static void setUIManagerDefaults() {
 
         Color backgroundColor = Color.white;
         Color foregroundColor = Color.darkGray;
@@ -93,9 +93,9 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-        //printInstalledFonts();
-        //printInstalledLookAndFeels();
+        printInstalledFonts();
+        printInstalledLookAndFeels();
         printUIManagerDefaults();
-        //out.println(ipAddress());
+        out.println(ipAddress());
     }
 }

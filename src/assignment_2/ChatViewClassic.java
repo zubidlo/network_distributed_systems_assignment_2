@@ -1,8 +1,5 @@
 package assignment_2;
 
-import assignment_2.HelperClasses.*;
-import assignment_2.interfaces.*;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.text.*;
@@ -199,21 +196,21 @@ public class ChatViewClassic extends JFrame implements ChatView {
     private static final String messageArrived = "button.wav";
 
     @Override
-    public void print(final Line chatLine) {
+    public void print(final ChatLine chatLine) {
         Sounds.playSound(messageArrived);
-        userNameStyle.addAttribute(StyleConstants.Foreground, chatLine.getColor());
+        userNameStyle.addAttribute(StyleConstants.Foreground, chatLine.color);
         try {
             chatPane.setCaretPosition(chatRoomDocument.getLength());
-            chatPane.insertIcon(chatLine.getIcon());
+            chatPane.insertIcon(chatLine.icon);
 
             chatRoomDocument.insertString(
                     chatRoomDocument.getLength(),
-                    String.format("[%s]>  ", chatLine.getName()),
+                    String.format("[%s]>  ", chatLine.name),
                     userNameStyle);
 
             chatRoomDocument.insertString(
                     chatRoomDocument.getLength(),
-                    String.format("%s%n", chatLine.getText()),
+                    String.format("%s%n", chatLine.text),
                     textStyle);
 
             chatPane.setCaretPosition(chatRoomDocument.getLength());

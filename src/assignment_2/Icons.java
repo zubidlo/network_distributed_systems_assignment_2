@@ -1,21 +1,26 @@
-package assignment_2.HelperClasses;
+package assignment_2;
 
 import javax.swing.*;
+import javax.swing.Icon;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * automatically creates list of ICONS from .png files in ICONS/ dir
  * images should be of 24x24 pixels size for visual consistency
  * Created by martin on 17/04/2015.
  */
-public class Icons {
+class Icons {
 
-    private static final List<Icon> ICONS = new ArrayList<>();
+    private static final List<Icon> ICONS;
     private static final String ICONS_FOLDER = "assignment_2/icons/";
 
     static {
+
+        List<Icon> icons = new ArrayList<>();
         File folder = new File(getResource(ICONS_FOLDER).getPath());
 
         File[] files = Arrays.asList(folder.listFiles())
@@ -25,23 +30,25 @@ public class Icons {
 
         Arrays.stream(files)
                 .filter(f -> f.getName().endsWith(".png"))
-                .forEachOrdered(f -> ICONS.add(new ImageIcon(f.getPath())));
+                .forEachOrdered(f -> icons.add(new ImageIcon(f.getPath())));
+
+        ICONS = Collections.unmodifiableList(icons);
     }
 
     private static URL getResource(final String path) {
         return Icons.class.getClassLoader().getResource(path);
     }
 
-    public static List<Icon> getAll() {
+    static List<Icon> getAll() {
         return ICONS;
     }
 
-    public static Icon get(final int index) {
+    static Icon get(final int index) {
         if (index >= ICONS.size()) throw new IllegalArgumentException("no such icon");
         else return ICONS.get(index);
     }
 
-    public static Icon createIcon(final String filename) {
+    static Icon createIcon(final String filename) {
         URL url = getResource(ICONS_FOLDER + filename);
         if(url == null) System.err.println(filename + " not found");
         return new ImageIcon(url);

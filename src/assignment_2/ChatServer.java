@@ -1,8 +1,5 @@
 package assignment_2;
 
-import assignment_2.HelperClasses.*;
-import assignment_2.interfaces.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
@@ -11,7 +8,6 @@ import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.*;
-import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -25,7 +21,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
     private final static Icon SERVER_ICON = Icons.createIcon("server.jpg");
     private final List<Client> connectedClients;
-    private final List<Line> lastTwentyChatLines;
+    private final List<ChatLine> lastTwentyChatLines;
 
     private ChatServer() throws RemoteException {
         connectedClients = new CopyOnWriteArrayList<>();
@@ -43,7 +39,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
 
         connectedClients.add(c);
         updateConnectedClientLists(connectedClients);
-        for(Line chatLine : lastTwentyChatLines)
+        for(ChatLine chatLine : lastTwentyChatLines)
             c.print(chatLine);
 
         c.print(new ChatLine(
@@ -74,7 +70,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
     }
 
     @Override
-    public void send(Line chatLine) throws RemoteException {
+    public void send(ChatLine chatLine) throws RemoteException {
         lastTwentyChatLines.add(chatLine);
         if(lastTwentyChatLines.size() > 20)
             lastTwentyChatLines.retainAll(lastTwentyChatLines.subList(1, 21));
@@ -85,7 +81,7 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
         for(Client c: connectedClients) c.print(connectedClients);
     }
 
-    private void sendToAllClients(Line chatLine) {
+    private void sendToAllClients(ChatLine chatLine) {
         if(connectedClients.size() > 0)
             connectedClients.forEach(c -> {
                 try {
@@ -102,14 +98,14 @@ class ChatServer extends UnicastRemoteObject implements Server, Serializable {
             MalformedURLException,
             UnknownHostException {
         if(args.length != 1) {
-            out.println("Usage: java ChatServer port");
+            out.println("Usage: java -Djava.security.manager -Djava.security.policy=chat.policy assignment_2.ChatServer port");
             System.exit(-1);
         }
         int port = Integer.parseInt(args[0]);
 
         String rmiString = Utils.makeRmiUrlString(Utils.ipAddress(), port, ChatServer.class.getSimpleName());
-        out.println(rmiString);
-        out.println(LocateRegistry.createRegistry(port).toString());
+        out.printf("%nrun client with 'java -Djava.security.manager -Djava.security.policy=chat.policy assignment_2.ChatClient %s'%n", rmiString);
+        LocateRegistry.createRegistry(port);
         System.setProperty("java.rmi.server.hostname", Utils.ipAddress());
         Naming.rebind(rmiString, new ChatServer());
     }

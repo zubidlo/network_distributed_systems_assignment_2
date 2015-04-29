@@ -1,11 +1,7 @@
 package assignment_2;
 
-import assignment_2.HelperClasses.*;
-import assignment_2.interfaces.*;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.*;
@@ -54,7 +50,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     }
 
     @Override
-    public void print(final Line chatLine) throws RemoteException {
+    public void print(final ChatLine chatLine) throws RemoteException {
         chatView.print(chatLine);
     }
 
@@ -81,12 +77,12 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
     public static void main(String[] args)
             throws RemoteException, NotBoundException, MalformedURLException {
 
-        if(args.length != 3) {
-            System.out.println("Usage: java ChatClient hostname port rmi_id");
+        if(args.length != 1) {
+            System.out.println("Usage: java -Djava.security.manager -Djava.security.policy=chat.policy assignment_2.ChatClient rmiURI");
         }
 
+        String rmiURI = args[0];
         Utils.setUIManagerDefaults();
-
         String username = "anonymous";
         String result = JOptionPane.showInputDialog(
                 null,
@@ -95,7 +91,8 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
 
         if(!result.equals("")) username = result;
 
-        Icon[] icons = Icons.getAll().stream()
+        Icon[] icons = Icons.getAll()
+                .stream()
                 .filter(i -> !((ImageIcon) i).getDescription().equals("server.png"))
                 .toArray(Icon[]::new);
 
@@ -108,13 +105,7 @@ class ChatClient extends UnicastRemoteObject implements Client, Serializable {
                 icons,
                 Icons.get(0));
 
-        String hostname = args[0];
-        int port = Integer.parseInt(args[1]);
-        String rmi_id = args[2];
-
-        System.out.print("available RMI stubs: ");
-        Utils.printRegistryList(Utils.makeRmiUrlString(hostname, port, rmi_id));
-        Server server = (Server) Naming.lookup(Utils.makeRmiUrlString(hostname, port, rmi_id));
+        Server server = (Server) Naming.lookup(rmiURI);
         new ChatClient(server, username, chosenIcon);
     }
 }
