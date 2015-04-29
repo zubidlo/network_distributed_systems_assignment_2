@@ -1,6 +1,6 @@
 # network distributed systems assignment_2
 
-_author:_ *Martin Zuber 16.5.2015*  
+_author:_ Martin Zuber 16.5.2015  
 compiled with jdk 8  
 
 Icons downloaded from:  
@@ -12,10 +12,10 @@ https://www.iconfinder.com/icons/49411/question_icon
 Sounds downloaded from:  
 http://www.soundjay.com/button-sounds-2.html  
 
-*All the credits belong to artists.**  
+**All the credits belong to artists.**  
 
 
-*HOWTO*:  
+**HOWTO**:  
 download and then run "0_compile_all.bat"    
 after compilation run "1_run_ChatServer.bat"  
 when server starts it outputs it's rmiURI in console  
