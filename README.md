@@ -1,4 +1,4 @@
-# network distributed systems assignment_2
+# network distributed systems assignment 2
 
 _author:_ Martin Zuber 16.5.2015  
 compiled with jdk 8  
